@@ -1,0 +1,148 @@
+html {
+  --background-main: #343233; /*Brown*/
+  --background-dark: #272526; /* Brown 25% black */
+  --normal-text: #efdab9; /* Dull yellow*/
+  --bold-text: #ffffff; /*White*/
+  --kinda-light-text: #8e8373; /* Light brown*/
+  --super-light-text: #574c4f; /* close-to-background brown*/
+  --super-light-line: #4e4b4d;
+  --primary-action: #ffd152; /* Stark yellow */
+  --primary-active: #ffc31f;
+  --secondy-action: #78b0a0; /* icy blue */
+  --secondy-active: #42b393; /* icy blue */
+
+  /* green:#5cb166
+  red:#c14e4e */
+}
+
+body {
+  background-color: var(--background-main);
+  color: var(--normal-text); /*yellow stark*/
+  font-family: monospace;
+}
+
+main {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 32px 64px;
+}
+
+strong {
+  color: var(--bold-text);
+}
+
+section {
+  border: 1px solid var(--super-light-line);
+  border-radius: 4px;
+  margin: 16px;
+  padding: 16px;
+}
+
+.card {
+  /* ratio: 1.4 or 1.55555 */
+  background-color: var(--background-dark);
+
+  display: inline-block;
+  /* min-height: 225px; */
+  width: 160px;
+  border: 1px solid var(--super-light-line);
+  border-radius: 8px;
+  margin: 16px;
+  padding: 16px;
+  cursor: pointer;
+  text-align: left;
+}
+.card:hover {
+  border-color: var(--secondy-active);
+}
+
+.card p {
+  min-height: 100px;
+}
+
+.card button {
+  width: 100%;
+  color: var(--background-dark);
+}
+
+table {
+  border-collapse: collapse;
+  text-align: center;
+  margin: 32px auto;
+  width: 80%;
+}
+
+th {
+  border-bottom: 1px solid var(--super-light-line);
+}
+th {
+  font-weight: normal;
+  color: var(--kinda-light-text);
+}
+td {
+  color: #fff;
+}
+
+.dice {
+  display: inline-block;
+  border: 2px dashed var(--super-light-line);
+  color: var(--kinda-light-text);
+  border-radius: 4px;
+  margin: 2px;
+  /* padding: 16px; */
+  height: 48px;
+  width: 48px;
+  line-height: 48px;
+  text-align: center;
+  /* font-weight: bold; */
+  font-size: 24px;
+  cursor: pointer;
+}
+.dice:hover {
+  border-color: var(--secondy-action);
+  color: var(--secondy-active);
+}
+.dice.selected {
+  border-style: solid;
+  border-color: var(--secondy-action);
+  color: var(--secondy-action);
+}
+.dice.selected:hover {
+  border-style: solid;
+  border-color: var(--secondy-active);
+  color: var(--secondy-active);
+}
+
+i {
+  /* color: var(--super-light-text); */
+  color: var(--kinda-light-text);
+  font-style: normal;
+  font-weight: normal;
+  text-transform: lowercase;
+  font-variant: small-caps;
+  text-shadow: 0 -1px 0 #24191c;
+}
+
+button {
+  background-color: var(--primary-action);
+  color: var(--background-main);
+  border: 0;
+  cursor: pointer;
+
+  font-family: inherit;
+  font-size: inherit;
+
+  padding: 0.5em 1em;
+  font-weight: bold;
+  border-radius: 4px;
+}
+button:hover {
+  background-color: var(--primary-active);
+}
+
+button.snd {
+  background-color: var(--secondy-action);
+}
+button:hover.snd {
+  background-color: var(--secondy-active);
+}
