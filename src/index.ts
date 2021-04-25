@@ -2,6 +2,6 @@ function add(a: number, b: number): number {
   return a + b;
 }
 
-export function main() {
-  console.log("Test: ", add(2, 5));
+export function start(x: number): string {
+  return `Sum of ${x} and 5 = ${add(x, 5)}`;
 }
