@@ -1,0 +1,10 @@
+{
+  "name": "captain-on-the-bridge",
+  "version": "1.0.0",
+  "description": "A card game set in space",
+  "main": "index.js",
+  "repository": "git@github.com:tkers/captain-on-the-bridge.git",
+  "author": "Tijn Kersjes <tijn@divbyzero.nl>",
+  "license": "MIT",
+  "private": true
+}
