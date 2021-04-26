@@ -8,25 +8,27 @@
     <link rel="stylesheet" href="astra.css" />
   </head>
   <body>
+    <nav></nav>
     <main>
       <div id="root"></div>
 
-      <h2>Choice your ship:</h2>
-
       <section>
         <h2>Spacecraft: <strong id="ship-name">-</strong></h2>
-        <br />
+        <div id="ship-health"></div>
+        <p id="ship-flavor">-</p>
         Attack: <strong id="ship-atk">-</strong><br />
         Defense: <strong id="ship-def">-</strong><br />
         Speed: <strong id="ship-spd">-</strong>
       </section>
 
       <section>
-        <h2>Modules</h2>
-        <ul>
-          <li>Basic laser</li>
-          <li>Shield repair <i>once per battle</i></li>
-        </ul>
+        <h2>
+          Modules <strong id="ship-modules-count">-</strong>/<span
+            id="ship-modules-max"
+            >-</span
+          >
+        </h2>
+        <div id="ship-modules"></div>
       </section>
 
       <section>

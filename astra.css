@@ -19,6 +19,36 @@ body {
   background-color: var(--background-main);
   color: var(--normal-text); /*yellow stark*/
   font-family: monospace;
+  margin: 0;
+  padding: 0;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.5;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.5;
+  }
+}
+
+nav {
+  height: 4px;
+  margin: 0;
+  padding: 0;
+  background-color: var(--secondy-action);
+  animation-name: pulse;
+  animation-duration: 8s;
+  animation-iteration-count: infinite;
 }
 
 main {
@@ -38,8 +68,47 @@ section {
   padding: 16px;
 }
 
+#ship-health {
+  display: inline-block;
+  position: relative;
+  top: -8px;
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 4px #42b393;
+  }
+
+  to {
+    box-shadow: 0 0 12px #42b393;
+  }
+}
+
+#ship-health div.bar {
+  height: 6px;
+  width: 24px;
+  margin-right: -2px;
+  border-radius: 2px;
+  background-color: var(--super-light-line);
+  display: inline-block;
+
+  transition-property: all;
+  transition-duration: 0.5s;
+  transition-timing-function: ease-in-out;
+}
+#ship-health div.bar.on {
+  background-color: #88c795;
+  animation-name: glow;
+  animation-duration: 1.2s;
+  animation-direction: alternate;
+  animation-iteration-count: infinite;
+  box-shadow: 0 0 4px #42b393;
+  /* box-shadow: 0 0 8px #42b393; */
+}
+
 .card {
   /* ratio: 1.4 or 1.55555 */
+  vertical-align: top;
   background-color: var(--background-dark);
 
   display: inline-block;
