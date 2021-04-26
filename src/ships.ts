@@ -35,7 +35,7 @@ export const fighter: Spacecraft = {
   defense: 3,
   speed: 4,
   moduleLimit: 3,
-  health: 10,
+  health: 6,
   modules: [laser, ion],
 };
 
@@ -47,7 +47,7 @@ export const intercepter: Spacecraft = {
   defense: 3,
   speed: 6,
   moduleLimit: 3,
-  health: 10,
+  health: 5,
   modules: [laser],
 };
 
@@ -58,6 +58,6 @@ export const cruiser: Spacecraft = {
   defense: 6,
   speed: 2,
   moduleLimit: 4,
-  health: 10,
+  health: 8,
   modules: [laser, chargedLaser, missle],
 };

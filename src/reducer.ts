@@ -3,20 +3,24 @@ import { Spacecraft } from "./ships";
 
 type State = {
   ship?: Spacecraft;
+  hp: number;
   worldDeck: Deck;
   currentCard?: Card;
+  currentEnemy?: number;
 };
 
 export const initialState: State = {
   ship: null,
+  hp: 0,
   worldDeck: [{ ...rustyLaser }, { ...spacePirate }, { ...niftyTechnician }],
   currentCard: null,
+  currentEnemy: null,
 };
 
 export const reducer = (state, action) => {
   switch (action.type) {
     case "SELECT_SHIP":
-      return { ...state, ship: action.ship };
+      return { ...state, ship: action.ship, hp: action.ship.health };
     case "TURN_CARD":
       return {
         ...state,
@@ -50,11 +54,23 @@ export const reducer = (state, action) => {
         ship: newShip,
         currentCard: {
           type: "INFO",
-          name: action.choice.name,
+          name: state.currentCard.name,
           flavor: action.choice.flavor,
         },
       };
     }
+    case "ATTEMPT_ESCAPE":
+      return {
+        ...state,
+        hp: state.hp - 1,
+        currentCard: {
+          type: "INFO",
+          name: "Narrow escape",
+          flavor: `You managed to get away from the ${action.enemy.name}, but not before they managed to hit you with a laser beam.`,
+        },
+      };
+    case "BATTLE_STATIONS":
+      return { ...state, currentEnemy: action.enemy.health };
     case "RESET":
       return initialState;
     default:

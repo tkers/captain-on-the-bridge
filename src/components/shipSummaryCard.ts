@@ -1,18 +1,25 @@
 import { h } from "preact";
 import { ModuleCard } from "./ModuleSummaryCard";
+import { useState } from "../predux";
 
 const ShipSummaryCard = ({ ship }) => {
-  // return h("section", null, [
+  const { hp } = useState();
+
+  const hpbar = [];
+  for (let i = 0; i < ship.health; i++) {
+    hpbar.push(
+      h("div", {
+        class: `bar ${i < hp ? (hp === 1 ? "warn" : "on") : ""}`,
+        style: `animation-delay: ${i * 0.25}s; transition-delay: ${
+          (ship.health - i) * 0.05
+        }s`,
+      })
+    );
+  }
+
   return [
     h("h2", null, ["Spacecraft: ", h("strong", null, ship.name)]),
-    h("div", { id: "ship-health" }, [
-      h("div", { class: "bar on", style: "animation-delay: 0s" }),
-      h("div", { class: "bar on", style: "animation-delay: 0.2s" }),
-      h("div", { class: "bar on", style: "animation-delay: 0.4s" }),
-      h("div", { class: "bar on", style: "animation-delay: 0.6s" }),
-      h("div", { class: "bar" }),
-      h("div", { class: "bar" }),
-    ]),
+    h("div", { id: "ship-health" }, hpbar),
     h(
       "div",
       { id: "ship-modules" },

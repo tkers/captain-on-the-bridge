@@ -55,7 +55,7 @@
       defense: 3,
       speed: 4,
       moduleLimit: 3,
-      health: 10,
+      health: 6,
       modules: [laser, ion]
   };
   var intercepter = {
@@ -65,7 +65,7 @@
       defense: 3,
       speed: 6,
       moduleLimit: 3,
-      health: 10,
+      health: 5,
       modules: [laser]
   };
   var cruiser = {
@@ -75,7 +75,7 @@
       defense: 6,
       speed: 2,
       moduleLimit: 4,
-      health: 10,
+      health: 8,
       modules: [laser, chargedLaser, missle]
   };
 
@@ -136,17 +136,17 @@
 
   var ShipSummaryCard = function (_a) {
       var ship = _a.ship;
-      // return h("section", null, [
+      var hp = useState().hp;
+      var hpbar = [];
+      for (var i = 0; i < ship.health; i++) {
+          hpbar.push(a$1("div", {
+              "class": "bar " + (i < hp ? (hp === 1 ? "warn" : "on") : ""),
+              style: "animation-delay: " + i * 0.25 + "s; transition-delay: " + (ship.health - i) * 0.05 + "s"
+          }));
+      }
       return [
           a$1("h2", null, ["Spacecraft: ", a$1("strong", null, ship.name)]),
-          a$1("div", { id: "ship-health" }, [
-              a$1("div", { "class": "bar on", style: "animation-delay: 0s" }),
-              a$1("div", { "class": "bar on", style: "animation-delay: 0.2s" }),
-              a$1("div", { "class": "bar on", style: "animation-delay: 0.4s" }),
-              a$1("div", { "class": "bar on", style: "animation-delay: 0.6s" }),
-              a$1("div", { "class": "bar" }),
-              a$1("div", { "class": "bar" }),
-          ]),
+          a$1("div", { id: "ship-health" }, hpbar),
           a$1("div", { id: "ship-modules" }, ship.modules.map(function (m) { return a$1(ModuleCard, { module: m }); })),
       ];
       // ]);
@@ -165,8 +165,11 @@
       }, worldDeck.length);
   };
 
+  const intersperse = (arr, sep) =>
+    arr.reduce((a, v) => [...a, v, sep], []).slice(0, -1);
+
   var CurrentCard = function () {
-      var card = useState().currentCard;
+      var _a = useState(), card = _a.currentCard, currentEnemy = _a.currentEnemy;
       if (!card)
           return null;
       var dispatch = useDispatch();
@@ -179,15 +182,75 @@
           }, "OK")));
       }
       else if (card.type === "ENCOUNTER") {
-          return a$1("div", { "class": "card current" }, a$1("strong", null, "\uD83D\uDEF8 " + card.name), a$1("p", null, card.flavor), a$1("div", { "class": "down" }, [
-              a$1("button", null, "Battle stations!"),
-              a$1("button", {
-                  "class": "snd",
-                  onclick: function () {
-                      dispatch({ type: "TURN_CARD" });
+          if (currentEnemy === null) {
+              return a$1("div", { "class": "card current" }, a$1("strong", null, "\uD83D\uDEF8 " + card.name), a$1("p", null, card.flavor), a$1("div", { "class": "down" }, [
+                  a$1("button", {
+                      onclick: function () {
+                          dispatch({ type: "BATTLE_STATIONS", enemy: card });
+                      }
+                  }, "Battle stations!"),
+                  a$1("button", {
+                      "class": "snd",
+                      onclick: function () {
+                          dispatch({ type: "ATTEMPT_ESCAPE", enemy: card });
+                      }
+                  }, "Attempt escape"),
+              ]));
+          }
+          else {
+              var moves_1 = [];
+              var dice_1 = [];
+              card.moves.forEach(function (m, i) {
+                  dice_1.push(i + 1);
+                  if (!m)
+                      return;
+                  moves_1.push([dice_1, m]);
+                  dice_1 = [];
+              });
+              var abbrevStat_1 = function (stat) {
+                  switch (stat) {
+                      case "ATTACK":
+                          return "ATK";
+                      case "DEFENSE":
+                          return "DEF";
+                      case "SPEED":
+                          return "SPD";
+                      case "HEALTH":
+                          return "HP";
                   }
-              }, "Attempt escape"),
-          ]));
+              };
+              var movelist = moves_1.map(function (_a) {
+                  var d = _a[0], m = _a[1];
+                  var effect = m.effect.map(function (e) {
+                      if (e.self) {
+                          if (e.stat === "HEALTH") {
+                              return "[" + (e.diff.amount || "") + (e.diff.amount && e.diff.stat ? "+" : "") + (e.diff.stat ? abbrevStat_1(e.diff.stat) : "") + " HP]";
+                          }
+                      }
+                      else {
+                          if (e.stat === "HEALTH") {
+                              return "[" + (e.diff.amount || "") + (e.diff.amount && e.diff.stat ? "+" : "") + (e.diff.stat ? abbrevStat_1(e.diff.stat) : "") + " DMG]";
+                          }
+                      }
+                  });
+                  return a$1("tr", null, [
+                      a$1("th", null, intersperse(d, a$1("br", null))),
+                      a$1("td", null, [
+                          a$1("strong", null, m.name),
+                          " ",
+                          m.flavor,
+                          " ",
+                          a$1("strong", null, effect),
+                      ]),
+                  ]);
+              });
+              return a$1("div", { "class": "card current" }, a$1("strong", null, "\uD83D\uDEF8 " + card.name), a$1("table", { "class": "movelist" }, movelist), a$1("div", { "class": "down" }, [
+                  "Health: ",
+                  a$1("strong", null, currentEnemy),
+                  "/",
+                  card.health,
+              ]));
+          }
       }
       else if (card.type === "ITEM") {
           return a$1("div", { "class": "card current" }, a$1("strong", null, "\u26A1\uFE0F " + card.name), a$1("p", null, card.flavor), a$1("div", { "class": "down" }, [
@@ -226,11 +289,9 @@
     if (!myShip) {
       return [
         a$1("h2", null, "Choose your starship:"),
-        // h("center", null, [
         a$1(ShipSelectCard, { ship: fighter }),
         a$1(ShipSelectCard, { ship: intercepter }),
         a$1(ShipSelectCard, { ship: cruiser }),
-        // ]),
       ];
     } else {
       return [
@@ -327,13 +388,15 @@
 
   var initialState = {
       ship: null,
+      hp: 0,
       worldDeck: [__assign({}, rustyLaser), __assign({}, spacePirate), __assign({}, niftyTechnician)],
-      currentCard: null
+      currentCard: null,
+      currentEnemy: null
   };
   var reducer = function (state, action) {
       switch (action.type) {
           case "SELECT_SHIP":
-              return __assign(__assign({}, state), { ship: action.ship });
+              return __assign(__assign({}, state), { ship: action.ship, hp: action.ship.health });
           case "TURN_CARD":
               return __assign(__assign({}, state), { currentCard: state.worldDeck[0], worldDeck: state.worldDeck.slice(1) });
           case "INSTALL_ITEM":
@@ -353,10 +416,18 @@
               }, state.ship);
               return __assign(__assign({}, state), { ship: newShip, currentCard: {
                       type: "INFO",
-                      name: action.choice.name,
+                      name: state.currentCard.name,
                       flavor: action.choice.flavor
                   } });
           }
+          case "ATTEMPT_ESCAPE":
+              return __assign(__assign({}, state), { hp: state.hp - 1, currentCard: {
+                      type: "INFO",
+                      name: "Narrow escape",
+                      flavor: "You managed to get away from the " + action.enemy.name + ", but not before they managed to hit you with a laser beam."
+                  } });
+          case "BATTLE_STATIONS":
+              return __assign(__assign({}, state), { currentEnemy: action.enemy.health });
           case "RESET":
               return initialState;
           default:
