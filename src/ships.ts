@@ -24,6 +24,7 @@ export type Spacecraft = {
   speed: number;
   moduleLimit: number;
   health: number;
+  maxHealth: number;
   modules: Module[];
 };
 
@@ -36,6 +37,7 @@ export const fighter: Spacecraft = {
   speed: 4,
   moduleLimit: 3,
   health: 6,
+  maxHealth: 6,
   modules: [laser, ion],
 };
 
@@ -48,6 +50,7 @@ export const intercepter: Spacecraft = {
   speed: 6,
   moduleLimit: 3,
   health: 5,
+  maxHealth: 5,
   modules: [laser],
 };
 
@@ -59,5 +62,6 @@ export const cruiser: Spacecraft = {
   speed: 2,
   moduleLimit: 4,
   health: 8,
+  maxHealth: 8,
   modules: [laser, chargedLaser, missle],
 };

@@ -1,17 +1,17 @@
 import { h } from "preact";
-import { ModuleCard } from "./ModuleSummaryCard";
+import ModuleCard from "./ModuleSummaryCard";
 import { useState } from "../predux";
 
 const ShipSummaryCard = ({ ship }) => {
-  const { hp } = useState();
-
   const hpbar = [];
-  for (let i = 0; i < ship.health; i++) {
+  for (let i = 0; i < ship.maxHealth; i++) {
     hpbar.push(
       h("div", {
-        class: `bar ${i < hp ? (hp === 1 ? "warn" : "on") : ""}`,
+        class: `bar ${
+          i < ship.health ? (ship.health === 1 ? "warn" : "on") : ""
+        }`,
         style: `animation-delay: ${i * 0.25}s; transition-delay: ${
-          (ship.health - i) * 0.05
+          (ship.maxHealth - i) * 0.05
         }s`,
       })
     );

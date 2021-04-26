@@ -3,12 +3,39 @@ import { useDispatch, useState } from "../predux";
 import { intersperse } from "../utils";
 
 const CurrentCard = () => {
-  const { currentCard: card, currentEnemy } = useState();
-  if (!card) return null;
+  const { currentCard: card, inBattle, isDead, score } = useState();
+  if (!card && !isDead) return null;
 
   const dispatch = useDispatch();
 
-  if (card.type === "INFO") {
+  if (isDead) {
+    return h(
+      "div",
+      { class: "card current" },
+      h("strong", null, `💥 Game Over`),
+      h(
+        "p",
+        null,
+        "Your ship got destroyed in a heroic battle. Your latest adventure lasted ",
+        h("strong", null, score),
+        " days."
+      ),
+      h(
+        "div",
+        { class: "down" },
+        h(
+          "button",
+          {
+            class: "snd",
+            onclick: () => {
+              dispatch({ type: "REPLAY" });
+            },
+          },
+          "Replay"
+        )
+      )
+    );
+  } else if (card.type === "INFO") {
     return h(
       "div",
       { class: "card current" },
@@ -30,13 +57,27 @@ const CurrentCard = () => {
       )
     );
   } else if (card.type === "ENCOUNTER") {
-    if (currentEnemy === null) {
+    if (!inBattle) {
       return h(
         "div",
         { class: "card current" },
         h("strong", null, `🛸 ${card.name}`),
         h("p", null, card.flavor),
         h("div", { class: "down" }, [
+          h("table", null, [
+            h("tr", null, [
+              h("th", null, "HP"),
+              h("th", null, "ATK"),
+              h("th", null, "DEF"),
+              h("th", null, "SPD"),
+            ]),
+            h("tr", null, [
+              h("td", null, card.maxHealth),
+              h("td", null, card.attack),
+              h("td", null, card.defense),
+              h("td", null, card.speed),
+            ]),
+          ]),
           h(
             "button",
             {
@@ -87,11 +128,11 @@ const CurrentCard = () => {
             if (e.stat === "HEALTH") {
               return `[${e.diff.amount || ""}${
                 e.diff.amount && e.diff.stat ? "+" : ""
-              }${e.diff.stat ? abbrevStat(e.diff.stat) : ""} HP]`;
+              }${e.diff.stat ? abbrevStat(e.diff.stat) : ""} FIX]`;
             }
           } else {
             if (e.stat === "HEALTH") {
-              return `[${e.diff.amount || ""}${
+              return `[${e.diff.amount * -1 || ""}${
                 e.diff.amount && e.diff.stat ? "+" : ""
               }${e.diff.stat ? abbrevStat(e.diff.stat) : ""} DMG]`;
             }
@@ -117,9 +158,9 @@ const CurrentCard = () => {
         h("table", { class: "movelist" }, movelist),
         h("div", { class: "down" }, [
           "Health: ",
-          h("strong", null, currentEnemy),
+          h("strong", null, card.health),
           "/",
-          card.health,
+          card.maxHealth,
         ])
       );
     }

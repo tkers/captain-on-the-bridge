@@ -7,9 +7,11 @@ import ShipSelectCard from "./components/shipSelectCard";
 import ShipSummaryCard from "./components/shipSummaryCard";
 import WorldDeck from "./components/worldDeck";
 import CurrentCard from "./components/currentCard";
+import DiceSection from "./components/diceSection";
+import EnemyDiceSection from "./components/enemyDiceSection";
 
 const Game = () => {
-  const { ship: myShip } = useState();
+  const { ship: myShip, inBattle, myTurn } = useState();
   if (!myShip) {
     return [
       h("h2", null, "Choose your starship:"),
@@ -22,6 +24,7 @@ const Game = () => {
       h(ShipSummaryCard, { ship: myShip }),
       h(WorldDeck, null),
       h(CurrentCard, null),
+      inBattle ? (myTurn ? h(DiceSection, null) : h(EnemyDiceSection)) : null,
     ];
   }
 };

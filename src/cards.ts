@@ -21,6 +21,7 @@ type EncounterCard = {
   defense: number;
   speed: number;
   health: number;
+  maxHealth: number;
   moves: [
     Move | null,
     Move | null,
@@ -96,6 +97,7 @@ export const spacePirate: EncounterCard = {
   defense: 2,
   speed: 5,
   health: 3,
+  maxHealth: 3,
   moves: [
     undefined,
     undefined,
@@ -108,12 +110,44 @@ export const spacePirate: EncounterCard = {
     {
       name: "Laser",
       flavor: "Your ship is hit by a laser barrage",
-      effect: [{ self: false, stat: "HEALTH", diff: { amount: 2 } }],
+      effect: [{ self: false, stat: "HEALTH", diff: { amount: -2 } }],
     },
     {
       name: "Critical hit",
       flavor: "A laser hits your ship's warp drives",
-      effect: [{ self: false, stat: "HEALTH", diff: { amount: 4 } }],
+      effect: [{ self: false, stat: "HEALTH", diff: { amount: -4 } }],
+    },
+  ],
+};
+
+export const rustyTurret: EncounterCard = {
+  type: "ENCOUNTER",
+  name: "Rusty Turret",
+  flavor:
+    "You approach a rusty turret. It does not look like much of a threat.",
+  attack: 1,
+  defense: 4,
+  speed: 0,
+  health: 2,
+  maxHealth: 2,
+  moves: [
+    undefined,
+    undefined,
+    {
+      name: "Whirr",
+      flavor: "The turret whirrs, but does not manage to do anything else",
+      effect: [],
+    },
+    undefined,
+    {
+      name: "Repair hull",
+      flavor: "The turret manages to restore its hull",
+      effect: [{ self: true, stat: "HEALTH", diff: { amount: 2 } }],
+    },
+    {
+      name: "Laser",
+      flavor: "Your ship is hit by light laser",
+      effect: [{ self: false, stat: "HEALTH", diff: { amount: -1 } }],
     },
   ],
 };

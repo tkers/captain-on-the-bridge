@@ -53,7 +53,7 @@ nav {
 }
 
 main {
-  max-width: 800px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 16px 16px 32px;
 }
@@ -70,6 +70,14 @@ section {
   border: 1px solid var(--super-light-line);
   border-radius: 4px;
   margin: 16px;
+  padding: 16px;
+}
+
+section.dicearea {
+  display: inline-block;
+  min-height: 280px;
+  width: 200px;
+  margin: 8px;
   padding: 16px;
 }
 
@@ -137,13 +145,13 @@ section {
   background-color: var(--background-dark);
 
   display: inline-block;
-  min-height: 280px;
-  width: 200px;
+  min-height: 294px;
+  width: 210px;
   /* border: 1px solid var(--super-light-line); */
   border: 1px solid transparent;
   border-radius: 8px;
-  margin: 8px;
-  padding: 16px;
+  margin: 6px;
+  padding: 12px;
   cursor: pointer;
   text-align: left;
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
@@ -156,6 +164,10 @@ section {
 .card button {
   width: 100%;
   color: var(--background-dark);
+  margin-top: 4px;
+}
+section.dicearea button {
+  width: 100%;
   margin-top: 4px;
 }
 
@@ -176,10 +188,12 @@ section {
     0 20px 1px -7px rgba(0, 0, 0, 0.1);
 }
 
-.card {
+.card,
+section.dicearea {
   position: relative;
 }
-.card .down {
+.card .down,
+section.dicearea .down {
   position: absolute;
   bottom: 16px;
   left: 16px;
@@ -239,6 +253,15 @@ table.movelist td {
   font-size: 24px;
   cursor: pointer;
 }
+.dice.rolled,
+.dice.placed {
+  border-style: solid;
+  background-color: var(--background-lite);
+  color: var(--normal-text);
+  transition: transform 200ms;
+  transition-timing-function: ease-in-out;
+}
+
 .dice:hover {
   border-color: var(--secondy-action);
   color: var(--secondy-active);
@@ -281,7 +304,9 @@ button:hover {
   background-color: var(--primary-active);
   box-shadow: 0 0 6px -2px var(--primary-action);
 }
-
+button:disabled {
+  filter: grayscale(0.8);
+}
 button.snd {
   background-color: var(--secondy-action);
 }

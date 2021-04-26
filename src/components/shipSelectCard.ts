@@ -11,11 +11,13 @@ const ShipSelectCard = ({ ship }) => {
     h("div", { class: "down" }, [
       h("table", null, [
         h("tr", null, [
+          h("th", null, "HP"),
           h("th", null, "ATK"),
           h("th", null, "DEF"),
           h("th", null, "SPD"),
         ]),
         h("tr", null, [
+          h("td", null, ship.health),
           h("td", null, ship.attack),
           h("td", null, ship.defense),
           h("td", null, ship.speed),
