@@ -86,19 +86,21 @@
       return a$1("div", { "class": "card" }, [
           a$1("strong", null, ship.name),
           a$1("p", null, ship.flavor),
-          a$1("table", null, [
-              a$1("tr", null, [
-                  a$1("th", null, "ATK"),
-                  a$1("th", null, "DEF"),
-                  a$1("th", null, "SPD"),
+          a$1("div", { "class": "down" }, [
+              a$1("table", null, [
+                  a$1("tr", null, [
+                      a$1("th", null, "ATK"),
+                      a$1("th", null, "DEF"),
+                      a$1("th", null, "SPD"),
+                  ]),
+                  a$1("tr", null, [
+                      a$1("td", null, ship.attack),
+                      a$1("td", null, ship.defense),
+                      a$1("td", null, ship.speed),
+                  ]),
               ]),
-              a$1("tr", null, [
-                  a$1("td", null, ship.attack),
-                  a$1("td", null, ship.defense),
-                  a$1("td", null, ship.speed),
-              ]),
+              a$1("button", { "class": "snd", onclick: onLaunch }, "Launch!"),
           ]),
-          a$1("button", { "class": "snd", onclick: onLaunch }, "Launch!"),
       ]);
   };
 
@@ -128,7 +130,7 @@
     return a$1("div", { class: "card" }, [
       a$1("strong", null, module.name),
       a$1("p", null, module.flavor),
-      a$1(ModuleCost, { module: module }),
+      a$1("div", { class: "down" }, a$1(ModuleCost, { module: module })),
     ]);
   };
 
@@ -150,22 +152,15 @@
       // ]);
   };
 
-  var amount = 12;
-  var margin = 8;
   var WorldDeck = function () {
       var worldDeck = useState().worldDeck;
       var dispatch = useDispatch();
-      var turnCard = function () { return dispatch({ type: "TURN_CARD" }); };
-      var stack = [];
-      var offset = (amount - 1) * margin;
-      for (var i = 0; i < amount; i++) {
-          stack.push(a$1("div", {
-              "class": "card stack",
-              style: "position:absolute; top: " + (offset - i * margin) + "px",
-              onclick: i === amount - 1 ? turnCard : undefined
-          }, "world (" + worldDeck.length + ")"));
-      }
-      return a$1("div", { style: "position:relative" }, stack);
+      return a$1("div", {
+          "class": "card stack",
+          onclick: function () {
+              dispatch({ type: "TURN_CARD" });
+          }
+      }, worldDeck.length);
   };
 
   var CurrentCard = function () {
@@ -174,39 +169,48 @@
           return null;
       var dispatch = useDispatch();
       if (card.type === "ENCOUNTER") {
-          return a$1("div", { "class": "card current" }, a$1("strong", null, "\uD83D\uDEF8 " + card.name), a$1("p", null, card.flavor), a$1("button", null, "Battle stations!"), a$1("button", {
-              "class": "snd",
-              onclick: function () {
-                  dispatch({ type: "TURN_CARD" });
-              }
-          }, "Attempt escape"));
+          return a$1("div", { "class": "card current" }, a$1("strong", null, "\uD83D\uDEF8 " + card.name), a$1("p", null, card.flavor), a$1("div", { "class": "down" }, [
+              a$1("button", null, "Battle stations!"),
+              a$1("button", {
+                  "class": "snd",
+                  onclick: function () {
+                      dispatch({ type: "TURN_CARD" });
+                  }
+              }, "Attempt escape"),
+          ]));
       }
       else if (card.type === "ITEM") {
-          return a$1("div", { "class": "card current" }, a$1("strong", null, "\u26A1\uFE0F " + card.name), a$1("p", null, card.flavor), a$1("button", {
-              onclick: function () {
-                  dispatch({ type: "INSTALL_ITEM", item: card.item });
-                  dispatch({ type: "TURN_CARD" });
-              }
-          }, "Install"), a$1("button", {
-              "class": "snd",
-              onclick: function () {
-                  dispatch({ type: "TURN_CARD" });
-              }
-          }, "Leave it"));
+          return a$1("div", { "class": "card current" }, a$1("strong", null, "\u26A1\uFE0F " + card.name), a$1("p", null, card.flavor), a$1("div", { "class": "down" }, [
+              a$1("button", {
+                  onclick: function () {
+                      dispatch({ type: "INSTALL_ITEM", item: card.item });
+                      dispatch({ type: "TURN_CARD" });
+                  }
+              }, "Install"),
+              a$1("button", {
+                  "class": "snd",
+                  onclick: function () {
+                      dispatch({ type: "TURN_CARD" });
+                  }
+              }, "Leave it"),
+          ]));
       }
       else if (card.type === "EVENT") {
-          return a$1("div", { "class": "card current" }, a$1("strong", null, "\uD83E\uDE90 " + card.name), a$1("p", null, card.flavor), a$1("button", {
-              onclick: function () {
-                  dispatch({ type: "MAKE_CHOICE", choice: card.options[0] });
-                  dispatch({ type: "TURN_CARD" });
-              }
-          }, card.options[0].name), a$1("button", {
-              "class": "snd",
-              onclick: function () {
-                  dispatch({ type: "MAKE_CHOICE", choice: card.options[1] });
-                  dispatch({ type: "TURN_CARD" });
-              }
-          }, card.options[1].name));
+          return a$1("div", { "class": "card current" }, a$1("strong", null, "\uD83E\uDE90 " + card.name), a$1("p", null, card.flavor), a$1("div", { "class": "down" }, [
+              a$1("button", {
+                  onclick: function () {
+                      dispatch({ type: "MAKE_CHOICE", choice: card.options[0] });
+                      dispatch({ type: "TURN_CARD" });
+                  }
+              }, card.options[0].name),
+              a$1("button", {
+                  "class": "snd",
+                  onclick: function () {
+                      dispatch({ type: "MAKE_CHOICE", choice: card.options[1] });
+                      dispatch({ type: "TURN_CARD" });
+                  }
+              }, card.options[1].name),
+          ]));
       }
   };
 
@@ -224,8 +228,8 @@
     } else {
       return [
         a$1(ShipSummaryCard, { ship: myShip }),
-        a$1("div", null, a$1(WorldDeck, null)),
-        a$1("div", null, a$1(CurrentCard, null)),
+        a$1(WorldDeck, null),
+        a$1(CurrentCard, null),
       ];
     }
   };

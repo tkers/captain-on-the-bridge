@@ -13,17 +13,19 @@ const CurrentCard = () => {
       { class: "card current" },
       h("strong", null, `🛸 ${card.name}`),
       h("p", null, card.flavor),
-      h("button", null, "Battle stations!"),
-      h(
-        "button",
-        {
-          class: "snd",
-          onclick: () => {
-            dispatch({ type: "TURN_CARD" });
+      h("div", { class: "down" }, [
+        h("button", null, "Battle stations!"),
+        h(
+          "button",
+          {
+            class: "snd",
+            onclick: () => {
+              dispatch({ type: "TURN_CARD" });
+            },
           },
-        },
-        "Attempt escape"
-      )
+          "Attempt escape"
+        ),
+      ])
     );
   } else if (card.type === "ITEM") {
     return h(
@@ -31,26 +33,28 @@ const CurrentCard = () => {
       { class: "card current" },
       h("strong", null, `⚡️ ${card.name}`),
       h("p", null, card.flavor),
-      h(
-        "button",
-        {
-          onclick: () => {
-            dispatch({ type: "INSTALL_ITEM", item: card.item });
-            dispatch({ type: "TURN_CARD" });
+      h("div", { class: "down" }, [
+        h(
+          "button",
+          {
+            onclick: () => {
+              dispatch({ type: "INSTALL_ITEM", item: card.item });
+              dispatch({ type: "TURN_CARD" });
+            },
           },
-        },
-        "Install"
-      ),
-      h(
-        "button",
-        {
-          class: "snd",
-          onclick: () => {
-            dispatch({ type: "TURN_CARD" });
+          "Install"
+        ),
+        h(
+          "button",
+          {
+            class: "snd",
+            onclick: () => {
+              dispatch({ type: "TURN_CARD" });
+            },
           },
-        },
-        "Leave it"
-      )
+          "Leave it"
+        ),
+      ])
     );
   } else if (card.type === "EVENT") {
     return h(
@@ -58,27 +62,29 @@ const CurrentCard = () => {
       { class: "card current" },
       h("strong", null, `🪐 ${card.name}`),
       h("p", null, card.flavor),
-      h(
-        "button",
-        {
-          onclick: () => {
-            dispatch({ type: "MAKE_CHOICE", choice: card.options[0] });
-            dispatch({ type: "TURN_CARD" });
+      h("div", { class: "down" }, [
+        h(
+          "button",
+          {
+            onclick: () => {
+              dispatch({ type: "MAKE_CHOICE", choice: card.options[0] });
+              dispatch({ type: "TURN_CARD" });
+            },
           },
-        },
-        card.options[0].name
-      ),
-      h(
-        "button",
-        {
-          class: "snd",
-          onclick: () => {
-            dispatch({ type: "MAKE_CHOICE", choice: card.options[1] });
-            dispatch({ type: "TURN_CARD" });
+          card.options[0].name
+        ),
+        h(
+          "button",
+          {
+            class: "snd",
+            onclick: () => {
+              dispatch({ type: "MAKE_CHOICE", choice: card.options[1] });
+              dispatch({ type: "TURN_CARD" });
+            },
           },
-        },
-        card.options[1].name
-      )
+          card.options[1].name
+        ),
+      ])
     );
   }
 };

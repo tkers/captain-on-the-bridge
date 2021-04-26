@@ -127,8 +127,8 @@ section {
   background-color: var(--background-dark);
 
   display: inline-block;
-  /* min-height: 225px; */
-  width: 160px;
+  min-height: 280px;
+  width: 200px;
   /* border: 1px solid var(--super-light-line); */
   border: 1px solid transparent;
   border-radius: 8px;
@@ -143,18 +143,16 @@ section {
   border: 1px solid var(--super-light-line);
 }
 
-.card p {
-  min-height: 100px;
-}
-
 .card button {
   width: 100%;
   color: var(--background-dark);
+  margin-top: 4px;
 }
 
 .card.stack {
-  height: 224px;
-  line-height: 224px;
+  /* display: inline-block; */
+  height: 280px;
+  line-height: 280px;
   text-align: center;
   color: var(--super-light-text);
   font-size: 32px;
@@ -163,11 +161,19 @@ section {
   text-transform: lowercase;
   font-variant: small-caps;
   text-shadow: 0 -1px 0 #24191c;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1), 0 10px 0 -4px var(--background-dark),
+    0 10px 1px -3px rgba(0, 0, 0, 0.1), 0 20px 0 -8px var(--background-dark),
+    0 20px 1px -7px rgba(0, 0, 0, 0.1);
 }
 
-.card.current {
+.card {
   position: relative;
-  left: 210px;
+}
+.card .down {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  right: 16px;
 }
 
 table {
@@ -242,6 +248,7 @@ button {
 }
 button:hover {
   background-color: var(--primary-active);
+  box-shadow: 0 0 6px -2px var(--primary-action);
 }
 
 button.snd {
@@ -249,4 +256,5 @@ button.snd {
 }
 button:hover.snd {
   background-color: var(--secondy-active);
+  box-shadow: 0 0 6px -2px var(--secondy-action);
 }

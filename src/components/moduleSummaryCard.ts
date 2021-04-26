@@ -6,7 +6,7 @@ export const ModuleCard = ({ module }) => {
   return h("div", { class: "card" }, [
     h("strong", null, module.name),
     h("p", null, module.flavor),
-    h(ModuleCost, { module: module }),
+    h("div", { class: "down" }, h(ModuleCost, { module: module })),
   ]);
 };
 

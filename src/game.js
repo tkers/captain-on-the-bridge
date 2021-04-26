@@ -22,8 +22,8 @@ const Game = () => {
   } else {
     return [
       h(ShipSummaryCard, { ship: myShip }),
-      h("div", null, h(WorldDeck, null)),
-      h("div", null, h(CurrentCard, null)),
+      h(WorldDeck, null),
+      h(CurrentCard, null),
     ];
   }
 };
