@@ -1,4 +1,4 @@
-import { Attack, laser } from "./attacks";
+import { Attack, laser, ion, missle, chargedLaser } from "./attacks";
 
 // type ShipClass = {
 //   atk: number;
@@ -14,7 +14,7 @@ import { Attack, laser } from "./attacks";
 //   modules: Attack[];
 // };
 
-type Module = Attack; // | Defend | Utility;
+export type Module = Attack; // | Defend | Utility;
 
 export type Spacecraft = {
   name: string;
@@ -36,7 +36,7 @@ export const fighter: Spacecraft = {
   speed: 4,
   moduleLimit: 3,
   health: 10,
-  modules: [laser, laser],
+  modules: [laser, ion],
 };
 
 export const intercepter: Spacecraft = {
@@ -48,7 +48,7 @@ export const intercepter: Spacecraft = {
   speed: 6,
   moduleLimit: 3,
   health: 10,
-  modules: [laser, laser],
+  modules: [laser],
 };
 
 export const cruiser: Spacecraft = {
@@ -59,5 +59,5 @@ export const cruiser: Spacecraft = {
   speed: 2,
   moduleLimit: 4,
   health: 10,
-  modules: [laser, laser, laser],
+  modules: [laser, chargedLaser, missle],
 };
