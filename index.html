@@ -12,26 +12,7 @@
     <main>
       <div id="root"></div>
 
-      <section>
-        <h2>Spacecraft: <strong id="ship-name">-</strong></h2>
-        <div id="ship-health"></div>
-        <p id="ship-flavor">-</p>
-        Attack: <strong id="ship-atk">-</strong><br />
-        Defense: <strong id="ship-def">-</strong><br />
-        Speed: <strong id="ship-spd">-</strong>
-      </section>
-
-      <section>
-        <h2>
-          Modules <strong id="ship-modules-count">-</strong>/<span
-            id="ship-modules-max"
-            >-</span
-          >
-        </h2>
-        <div id="ship-modules"></div>
-      </section>
-
-      <section>
+      <section style="display: none;">
         <h2>Dice</h2>
         <br />
         <div class="dice">2</div>
@@ -39,7 +20,7 @@
         <div class="dice selected">4</div>
       </section>
 
-      <section>
+      <section style="display: none;">
         <strong>Deck / Current location</strong><br />
         <i>[Name & Flavor text]</i>
         <button>Attempt Flee</button>

@@ -71,7 +71,7 @@ section {
 #ship-health {
   display: inline-block;
   position: relative;
-  top: -8px;
+  top: -12px;
 }
 
 @keyframes glow {
@@ -85,10 +85,10 @@ section {
 }
 
 #ship-health div.bar {
-  height: 6px;
+  height: 4px;
   width: 24px;
   margin-right: -2px;
-  border-radius: 2px;
+  border-radius: 4px;
   background-color: var(--super-light-line);
   display: inline-block;
 

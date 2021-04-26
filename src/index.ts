@@ -16,6 +16,12 @@ const createCard = (html, onclick?) => {
   return elem;
 };
 
+const createSection = (html) => {
+  const elem = document.createElement("section");
+  elem.innerHTML = html;
+  return elem;
+};
+
 const createDiceCost = (val) => {
   switch (val.kind) {
     case "ALL":
@@ -46,35 +52,74 @@ const createModuleCard = (module: Module) => {
   return card;
 };
 
-const selectShip = (ship: Spacecraft) => {
-  $ship = ship;
-  document.getElementById("ship-name").textContent = $ship.name;
-  document.getElementById("ship-flavor").textContent = $ship.flavor;
-  document.getElementById("ship-atk").textContent = `${$ship.attack}`;
-  document.getElementById("ship-def").textContent = `${$ship.defense}`;
-  document.getElementById("ship-spd").textContent = `${$ship.speed}`;
-
-  document.getElementById("ship-health").innerHTML = `
-  <div class="bar on" style="animation-delay: 0s"></div>
-  <div class="bar on" style="animation-delay: 0.2s"></div>
-  <div class="bar on" style="animation-delay: 0.4s"></div>
-  <div class="bar on" style="animation-delay: 0.6s"></div>
-  <div class="bar"></div>
-  <div class="bar"></div>
+const createShipSummaryCard = (ship: Spacecraft) => {
+  const html = `
+    <h2>Spacecraft: <strong>${ship.name}</strong></h2>
+    <div id="ship-health">
+      <div class="bar on" style="animation-delay: 0s"></div>
+      <div class="bar on" style="animation-delay: 0.2s"></div>
+      <div class="bar on" style="animation-delay: 0.4s"></div>
+      <div class="bar on" style="animation-delay: 0.6s"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+    <p>${ship.flavor}</p>
+    Attack: <strong>${ship.attack}</strong><br />
+    Defense: <strong>${ship.defense}</strong><br />
+    Speed: <strong>${ship.speed}</strong>
   `;
-
-  document.getElementById(
-    "ship-modules-count"
-  ).textContent = `${ship.modules.length}`;
-  document.getElementById(
-    "ship-modules-max"
-  ).textContent = `${ship.moduleLimit}`;
-
-  const modules = ship.modules.map((m) => createModuleCard(m));
-  setElems(document.getElementById("ship-modules"), modules);
+  return createSection(html);
 };
 
-const createShipCard = (ship: Spacecraft) => {
+const createShipModulesCard = (ship: Spacecraft) => {
+  const html = `
+    <h2>
+      Modules <strong id="ship-modules-count">${ship.modules.length}</strong>/<span>${ship.moduleLimit}</span>
+    </h2>
+  `;
+  const sect = createSection(html);
+
+  const mdiv = document.createElement("div");
+  mdiv.id = "ship-modules";
+  const modules = ship.modules.map((m) => createModuleCard(m));
+  appendElems(mdiv, modules);
+
+  appendElems(sect, mdiv);
+
+  return sect;
+};
+
+const selectShip = (ship: Spacecraft) => {
+  $ship = ship;
+
+  setRootContent([createShipSummaryCard(ship), createShipModulesCard(ship)]);
+  // document.getElementById("ship-name").textContent = $ship.name;
+  // document.getElementById("ship-flavor").textContent = $ship.flavor;
+  // document.getElementById("ship-atk").textContent = `${$ship.attack}`;
+  // document.getElementById("ship-def").textContent = `${$ship.defense}`;
+  // document.getElementById("ship-spd").textContent = `${$ship.speed}`;
+  //
+  // document.getElementById("ship-health").innerHTML = `
+  // <div class="bar on" style="animation-delay: 0s"></div>
+  // <div class="bar on" style="animation-delay: 0.2s"></div>
+  // <div class="bar on" style="animation-delay: 0.4s"></div>
+  // <div class="bar on" style="animation-delay: 0.6s"></div>
+  // <div class="bar"></div>
+  // <div class="bar"></div>
+  // `;
+
+  // document.getElementById(
+  //   "ship-modules-count"
+  // ).textContent = `${ship.modules.length}`;
+  // document.getElementById(
+  //   "ship-modules-max"
+  // ).textContent = `${ship.moduleLimit}`;
+
+  // const modules = ship.modules.map((m) => createModuleCard(m));
+  // setElems(document.getElementById("ship-modules"), modules);
+};
+
+const createShipSelectionCard = (ship: Spacecraft) => {
   const html = `
     <strong>${ship.name}</strong>
     <p>${ship.flavor}</p>
@@ -110,9 +155,9 @@ function createdCentered(elems) {
 
 function pickShipPhase() {
   const title = createTitle("Choose your starship:");
-  const ship1 = createShipCard(fighter);
-  const ship2 = createShipCard(intercepter);
-  const ship3 = createShipCard(cruiser);
+  const ship1 = createShipSelectionCard(fighter);
+  const ship2 = createShipSelectionCard(intercepter);
+  const ship3 = createShipSelectionCard(cruiser);
   const options = createdCentered([ship1, ship2, ship3]);
   setRootContent([title, options]);
 }
