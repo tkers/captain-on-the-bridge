@@ -79,93 +79,94 @@
       modules: [laser, chargedLaser, missle]
   };
 
-  const ShipSelectCard = ({ ship }) => {
-    const dispatch = useDispatch();
-    const onLaunch = () => dispatch({ type: "SELECT_SHIP", ship });
-
-    return a$1("div", { class: "card" }, [
-      a$1("strong", null, ship.name),
-      a$1("p", null, ship.flavor),
-      a$1("table", null, [
-        a$1("tr", null, [
-          a$1("th", null, "ATK"),
-          a$1("th", null, "DEF"),
-          a$1("th", null, "SPD"),
-        ]),
-        a$1("tr", null, [
-          a$1("td", null, ship.attack),
-          a$1("td", null, ship.defense),
-          a$1("td", null, ship.speed),
-        ]),
-      ]),
-      a$1("button", { class: "snd", onclick: onLaunch }, "Launch!"),
-    ]);
+  var ShipSelectCard = function (_a) {
+      var ship = _a.ship;
+      var dispatch = useDispatch();
+      var onLaunch = function () { return dispatch({ type: "SELECT_SHIP", ship: ship }); };
+      return a$1("div", { "class": "card" }, [
+          a$1("strong", null, ship.name),
+          a$1("p", null, ship.flavor),
+          a$1("table", null, [
+              a$1("tr", null, [
+                  a$1("th", null, "ATK"),
+                  a$1("th", null, "DEF"),
+                  a$1("th", null, "SPD"),
+              ]),
+              a$1("tr", null, [
+                  a$1("td", null, ship.attack),
+                  a$1("td", null, ship.defense),
+                  a$1("td", null, ship.speed),
+              ]),
+          ]),
+          a$1("button", { "class": "snd", onclick: onLaunch }, "Launch!"),
+      ]);
   };
 
-  const ShipSummaryCard = ({ ship }) => {
-    return a$1("section", null, [
-      a$1("h2", null, ["Spacecraft: ", a$1("strong", null, ship.name)]),
-      a$1("div", { id: "ship-health" }, [
-        a$1("div", { class: "bar on", style: "animation-delay: 0s" }),
-        a$1("div", { class: "bar on", style: "animation-delay: 0.2s" }),
-        a$1("div", { class: "bar on", style: "animation-delay: 0.4s" }),
-        a$1("div", { class: "bar on", style: "animation-delay: 0.6s" }),
-        a$1("div", { class: "bar" }),
-        a$1("div", { class: "bar" }),
-      ]),
-      a$1("p", null, ship.flavor),
-      "Attack: ",
-      a$1("strong", null, ship.attack),
-      a$1("br", null),
-      "Defense: ",
-      a$1("strong", null, ship.defense),
-      a$1("br", null),
-      "Speed: ",
-      a$1("strong", null, ship.speed),
-    ]);
+  var ShipSummaryCard = function (_a) {
+      var ship = _a.ship;
+      return a$1("section", null, [
+          a$1("h2", null, ["Spacecraft: ", a$1("strong", null, ship.name)]),
+          a$1("div", { id: "ship-health" }, [
+              a$1("div", { "class": "bar on", style: "animation-delay: 0s" }),
+              a$1("div", { "class": "bar on", style: "animation-delay: 0.2s" }),
+              a$1("div", { "class": "bar on", style: "animation-delay: 0.4s" }),
+              a$1("div", { "class": "bar on", style: "animation-delay: 0.6s" }),
+              a$1("div", { "class": "bar" }),
+              a$1("div", { "class": "bar" }),
+          ]),
+          a$1("p", null, ship.flavor),
+          "Attack: ",
+          a$1("strong", null, ship.attack),
+          a$1("br", null),
+          "Defense: ",
+          a$1("strong", null, ship.defense),
+          a$1("br", null),
+          "Speed: ",
+          a$1("strong", null, ship.speed),
+      ]);
   };
 
-  const DiceCost = ({ dice }) => {
-    switch (dice.kind) {
-      case "ALL":
-        return a$1("div", { class: "dice" }, "*");
-      case "ODD":
-        return a$1("div", { class: "dice" }, "ODD");
-      case "EVEN":
-        return a$1("div", { class: "dice" }, "EVEN");
-      case "MIN":
-        return a$1("div", { class: "dice" }, [dice.amount, ">"]);
-      case "MAX":
-        return a$1("div", { class: "dice" }, [dice.amount, "<"]);
-    }
+  var DiceCost = function (_a) {
+      var dice = _a.dice;
+      switch (dice.kind) {
+          case "ALL":
+              return a$1("div", { "class": "dice" }, "*");
+          case "ODD":
+              return a$1("div", { "class": "dice" }, "ODD");
+          case "EVEN":
+              return a$1("div", { "class": "dice" }, "EVEN");
+          case "MIN":
+              return a$1("div", { "class": "dice" }, [dice.amount, ">"]);
+          case "MAX":
+              return a$1("div", { "class": "dice" }, [dice.amount, "<"]);
+      }
+  };
+  var ModuleCost = function (_a) {
+      var module = _a.module;
+      return module.cost.kind === "TOTAL"
+          ? [a$1("div", { "class": "dice" }, "+"), module.cost.amount, " remaining"]
+          : module.cost.values.map(function (v) { return a$1(DiceCost, { dice: v }); });
   };
 
-  const ModuleCard = ({ module }) => {
-    const cost =
-      module.cost.kind === "TOTAL"
-        ? [a$1("div", { class: "dice" }, "+"), module.cost.amount, " remaining"]
-        : module.cost.values.map((v) => a$1(DiceCost, { dice: v }));
-    return a$1("div", { class: "card" }, [
-      a$1("strong", null, module.name),
-      a$1("p", null, module.flavor),
-      cost,
-    ]);
+  var ModuleCard = function (_a) {
+      var module = _a.module;
+      return a$1("div", { "class": "card" }, [
+          a$1("strong", null, module.name),
+          a$1("p", null, module.flavor),
+          a$1(ModuleCost, { module: module }),
+      ]);
   };
-
-  const ModuleSummaryCard = ({ ship }) => {
-    return a$1("section", null, [
-      a$1("h2", null, [
-        "Modules ",
-        a$1("strong", null, ship.modules.length),
-        "/",
-        ship.moduleLimit,
-      ]),
-      a$1(
-        "div",
-        { id: "ship-modules" },
-        ship.modules.map((m) => a$1(ModuleCard, { module: m }))
-      ),
-    ]);
+  var ModuleSummaryCard = function (_a) {
+      var ship = _a.ship;
+      return a$1("section", null, [
+          a$1("h2", null, [
+              "Modules ",
+              a$1("strong", null, ship.modules.length),
+              "/",
+              ship.moduleLimit,
+          ]),
+          a$1("div", { id: "ship-modules" }, ship.modules.map(function (m) { return a$1(ModuleCard, { module: m }); })),
+      ]);
   };
 
   const Game = () => {
@@ -187,19 +188,44 @@
     }
   };
 
-  const initialState = {
-    ship: null,
+  /*! *****************************************************************************
+  Copyright (c) Microsoft Corporation.
+
+  Permission to use, copy, modify, and/or distribute this software for any
+  purpose with or without fee is hereby granted.
+
+  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+  REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+  AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+  INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+  LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+  OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+  PERFORMANCE OF THIS SOFTWARE.
+  ***************************************************************************** */
+
+  var __assign = function() {
+      __assign = Object.assign || function __assign(t) {
+          for (var s, i = 1, n = arguments.length; i < n; i++) {
+              s = arguments[i];
+              for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          }
+          return t;
+      };
+      return __assign.apply(this, arguments);
   };
 
-  const reducer = (state, action) => {
-    switch (action.type) {
-      case "SELECT_SHIP":
-        return { ...state, ship: action.ship };
-      case "RESET":
-        return initialState;
-      default:
-        throw new Error(`Unexpected action type ${action.type}`);
-    }
+  var initialState = {
+      ship: null
+  };
+  var reducer = function (state, action) {
+      switch (action.type) {
+          case "SELECT_SHIP":
+              return __assign(__assign({}, state), { ship: action.ship });
+          case "RESET":
+              return initialState;
+          default:
+              throw new Error("Unexpected action type " + action.type);
+      }
   };
 
   window.addEventListener("load", function () {
