@@ -1,10 +1,11 @@
 import { h } from "preact";
-import { useDispatch } from "../predux";
+import { useState, useDispatch } from "../predux";
 
 const amount = 12;
 const margin = 8;
 
 const WorldDeck = () => {
+  const { worldDeck } = useState();
   const dispatch = useDispatch();
   const turnCard = () => dispatch({ type: "TURN_CARD" });
   const stack = [];
@@ -18,7 +19,7 @@ const WorldDeck = () => {
           style: `position:absolute; top: ${offset - i * margin}px`,
           onclick: i === amount - 1 ? turnCard : undefined,
         },
-        "world"
+        `world (${worldDeck.length})`
       )
     );
   }

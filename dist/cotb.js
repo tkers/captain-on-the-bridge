@@ -153,6 +153,7 @@
   var amount = 12;
   var margin = 8;
   var WorldDeck = function () {
+      var worldDeck = useState().worldDeck;
       var dispatch = useDispatch();
       var turnCard = function () { return dispatch({ type: "TURN_CARD" }); };
       var stack = [];
@@ -162,16 +163,51 @@
               "class": "card stack",
               style: "position:absolute; top: " + (offset - i * margin) + "px",
               onclick: i === amount - 1 ? turnCard : undefined
-          }, "world"));
+          }, "world (" + worldDeck.length + ")"));
       }
       return a$1("div", { style: "position:relative" }, stack);
   };
 
   var CurrentCard = function () {
-      var currentCard = useState().currentCard;
-      return currentCard
-          ? a$1("div", { "class": "card stack", style: "position:relative; left: 250px" }, currentCard.text)
-          : null;
+      var card = useState().currentCard;
+      if (!card)
+          return null;
+      var dispatch = useDispatch();
+      if (card.type === "ENCOUNTER") {
+          return a$1("div", { "class": "card current" }, a$1("strong", null, "\uD83D\uDEF8 " + card.name), a$1("p", null, card.flavor), a$1("button", null, "Battle stations!"), a$1("button", {
+              "class": "snd",
+              onclick: function () {
+                  dispatch({ type: "TURN_CARD" });
+              }
+          }, "Attempt escape"));
+      }
+      else if (card.type === "ITEM") {
+          return a$1("div", { "class": "card current" }, a$1("strong", null, "\u26A1\uFE0F " + card.name), a$1("p", null, card.flavor), a$1("button", {
+              onclick: function () {
+                  dispatch({ type: "INSTALL_ITEM", item: card.item });
+                  dispatch({ type: "TURN_CARD" });
+              }
+          }, "Install"), a$1("button", {
+              "class": "snd",
+              onclick: function () {
+                  dispatch({ type: "TURN_CARD" });
+              }
+          }, "Leave it"));
+      }
+      else if (card.type === "EVENT") {
+          return a$1("div", { "class": "card current" }, a$1("strong", null, "\uD83E\uDE90 " + card.name), a$1("p", null, card.flavor), a$1("button", {
+              onclick: function () {
+                  dispatch({ type: "MAKE_CHOICE", choice: card.options[0] });
+                  dispatch({ type: "TURN_CARD" });
+              }
+          }, card.options[0].name), a$1("button", {
+              "class": "snd",
+              onclick: function () {
+                  dispatch({ type: "MAKE_CHOICE", choice: card.options[1] });
+                  dispatch({ type: "TURN_CARD" });
+              }
+          }, card.options[1].name));
+      }
   };
 
   const Game = () => {
@@ -220,9 +256,67 @@
       return __assign.apply(this, arguments);
   };
 
+  function __spreadArray(to, from) {
+      for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+          to[j] = from[i];
+      return to;
+  }
+
+  var niftyTechnician = {
+      type: "EVENT",
+      name: "Nifty Technician",
+      flavor: "Your Head Technician offers to redirect some of the shield enery to your hyperdrive.",
+      options: [
+          {
+              name: "Hell yes!",
+              flavor: "The technician lowers the shields in favor of the hyperdrive",
+              effect: [
+                  { self: true, stat: "SPEED", diff: { amount: 4 } },
+                  { self: true, stat: "DEFENSE", diff: { amount: -2 } },
+              ]
+          },
+          { name: "Too risky", flavor: "You keep your shields intact.", effect: [] },
+      ]
+  };
+  var rustyLaser = {
+      type: "ITEM",
+      name: "Rusty Laser",
+      flavor: "You find a rusty laser cannon, it still appears to be functional",
+      item: laser
+  };
+  var spacePirate = {
+      type: "ENCOUNTER",
+      name: "Space Pirates",
+      flavor: "Out of nowhere, a small vessel approaches. It's clearly not friendly.",
+      attack: 5,
+      defense: 2,
+      speed: 5,
+      health: 3,
+      moves: [
+          undefined,
+          undefined,
+          {
+              name: "Close call",
+              flavor: "A laser shot just barely misses your ship",
+              effect: []
+          },
+          undefined,
+          {
+              name: "Laser",
+              flavor: "Your ship is hit by a laser barrage",
+              effect: [{ self: false, stat: "HEALTH", diff: { amount: 2 } }]
+          },
+          {
+              name: "Critical hit",
+              flavor: "A laser hits your ship's warp drives",
+              effect: [{ self: false, stat: "HEALTH", diff: { amount: 4 } }]
+          },
+      ]
+  };
+
   var initialState = {
       ship: null,
-      worldDeck: [{ text: "A" }, { text: "B" }, { text: "C" }, { text: "D" }],
+      worldDeck: [__assign({}, rustyLaser), __assign({}, spacePirate), __assign({}, niftyTechnician)],
       currentCard: null
   };
   var reducer = function (state, action) {
@@ -231,6 +325,18 @@
               return __assign(__assign({}, state), { ship: action.ship });
           case "TURN_CARD":
               return __assign(__assign({}, state), { currentCard: state.worldDeck[0], worldDeck: state.worldDeck.slice(1) });
+          case "INSTALL_ITEM":
+              return __assign(__assign({}, state), { ship: __assign(__assign({}, state.ship), { modules: __spreadArray([action.item], state.ship.modules) }) });
+          case "MAKE_CHOICE": {
+              return action.choice.effect.reduce(function (s, effect) {
+                  var _a;
+                  var stat = effect.stat.toLowerCase();
+                  var buff = effect.diff.stat
+                      ? s.ship[effect.diff.stat.toLowerCase()]
+                      : 0;
+                  return __assign(__assign({}, s), { ship: __assign(__assign({}, s.ship), (_a = {}, _a[stat] = s.ship[stat] + effect.diff.amount + buff, _a)) });
+              }, state);
+          }
           case "RESET":
               return initialState;
           default:
