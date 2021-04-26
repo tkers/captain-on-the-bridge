@@ -27,18 +27,33 @@ export const reducer = (state, action) => {
       return {
         ...state,
         ship: { ...state.ship, modules: [action.item, ...state.ship.modules] },
+        currentCard: {
+          type: "INFO",
+          name: "Ship upgraded",
+          flavor: `You installed the ${action.item.name}.`,
+        },
       };
     case "MAKE_CHOICE": {
-      return action.choice.effect.reduce((s, effect) => {
+      const newShip = action.choice.effect.reduce((ship, effect) => {
         const stat = effect.stat.toLowerCase();
         const buff = effect.diff.stat
-          ? s.ship[effect.diff.stat.toLowerCase()]
+          ? state.ship[effect.diff.stat.toLowerCase()]
           : 0;
         return {
-          ...s,
-          ship: { ...s.ship, [stat]: s.ship[stat] + effect.diff.amount + buff },
+          ...ship,
+          [stat]: state.ship[stat] + effect.diff.amount + buff,
         };
-      }, state);
+      }, state.ship);
+
+      return {
+        ...state,
+        ship: newShip,
+        currentCard: {
+          type: "INFO",
+          name: action.choice.name,
+          flavor: action.choice.flavor,
+        },
+      };
     }
     case "RESET":
       return initialState;

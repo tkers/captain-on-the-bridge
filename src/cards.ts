@@ -51,7 +51,13 @@ type EventCard = {
   options: [Choice, Choice];
 };
 
-export type Card = EncounterCard | ItemCard | EventCard;
+type InfoCard = {
+  type: "INFO";
+  name: string;
+  flavor: string;
+};
+
+export type Card = InfoCard | EncounterCard | ItemCard | EventCard;
 export type Deck = Card[];
 
 import { laser } from "./attacks";

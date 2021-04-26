@@ -7,7 +7,28 @@ const CurrentCard = () => {
 
   const dispatch = useDispatch();
 
-  if (card.type === "ENCOUNTER") {
+  if (card.type === "INFO") {
+    return h(
+      "div",
+      { class: "card current" },
+      h("strong", null, `☄️ ${card.name}`),
+      h("p", null, card.flavor),
+      h(
+        "div",
+        { class: "down" },
+        h(
+          "button",
+          {
+            class: "snd",
+            onclick: () => {
+              dispatch({ type: "TURN_CARD" });
+            },
+          },
+          "OK"
+        )
+      )
+    );
+  } else if (card.type === "ENCOUNTER") {
     return h(
       "div",
       { class: "card current" },
@@ -39,7 +60,6 @@ const CurrentCard = () => {
           {
             onclick: () => {
               dispatch({ type: "INSTALL_ITEM", item: card.item });
-              dispatch({ type: "TURN_CARD" });
             },
           },
           "Install"
@@ -68,7 +88,6 @@ const CurrentCard = () => {
           {
             onclick: () => {
               dispatch({ type: "MAKE_CHOICE", choice: card.options[0] });
-              dispatch({ type: "TURN_CARD" });
             },
           },
           card.options[0].name
@@ -79,7 +98,6 @@ const CurrentCard = () => {
             class: "snd",
             onclick: () => {
               dispatch({ type: "MAKE_CHOICE", choice: card.options[1] });
-              dispatch({ type: "TURN_CARD" });
             },
           },
           card.options[1].name

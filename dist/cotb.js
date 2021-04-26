@@ -153,12 +153,14 @@
   };
 
   var WorldDeck = function () {
-      var worldDeck = useState().worldDeck;
+      var _a = useState(), worldDeck = _a.worldDeck, currentCard = _a.currentCard;
       var dispatch = useDispatch();
       return a$1("div", {
           "class": "card stack",
           onclick: function () {
-              dispatch({ type: "TURN_CARD" });
+              if (!currentCard) {
+                  dispatch({ type: "TURN_CARD" });
+              }
           }
       }, worldDeck.length);
   };
@@ -168,7 +170,15 @@
       if (!card)
           return null;
       var dispatch = useDispatch();
-      if (card.type === "ENCOUNTER") {
+      if (card.type === "INFO") {
+          return a$1("div", { "class": "card current" }, a$1("strong", null, "\u2604\uFE0F " + card.name), a$1("p", null, card.flavor), a$1("div", { "class": "down" }, a$1("button", {
+              "class": "snd",
+              onclick: function () {
+                  dispatch({ type: "TURN_CARD" });
+              }
+          }, "OK")));
+      }
+      else if (card.type === "ENCOUNTER") {
           return a$1("div", { "class": "card current" }, a$1("strong", null, "\uD83D\uDEF8 " + card.name), a$1("p", null, card.flavor), a$1("div", { "class": "down" }, [
               a$1("button", null, "Battle stations!"),
               a$1("button", {
@@ -184,7 +194,6 @@
               a$1("button", {
                   onclick: function () {
                       dispatch({ type: "INSTALL_ITEM", item: card.item });
-                      dispatch({ type: "TURN_CARD" });
                   }
               }, "Install"),
               a$1("button", {
@@ -200,14 +209,12 @@
               a$1("button", {
                   onclick: function () {
                       dispatch({ type: "MAKE_CHOICE", choice: card.options[0] });
-                      dispatch({ type: "TURN_CARD" });
                   }
               }, card.options[0].name),
               a$1("button", {
                   "class": "snd",
                   onclick: function () {
                       dispatch({ type: "MAKE_CHOICE", choice: card.options[1] });
-                      dispatch({ type: "TURN_CARD" });
                   }
               }, card.options[1].name),
           ]));
@@ -330,16 +337,25 @@
           case "TURN_CARD":
               return __assign(__assign({}, state), { currentCard: state.worldDeck[0], worldDeck: state.worldDeck.slice(1) });
           case "INSTALL_ITEM":
-              return __assign(__assign({}, state), { ship: __assign(__assign({}, state.ship), { modules: __spreadArray([action.item], state.ship.modules) }) });
+              return __assign(__assign({}, state), { ship: __assign(__assign({}, state.ship), { modules: __spreadArray([action.item], state.ship.modules) }), currentCard: {
+                      type: "INFO",
+                      name: "Ship upgraded",
+                      flavor: "You installed the " + action.item.name + "."
+                  } });
           case "MAKE_CHOICE": {
-              return action.choice.effect.reduce(function (s, effect) {
+              var newShip = action.choice.effect.reduce(function (ship, effect) {
                   var _a;
                   var stat = effect.stat.toLowerCase();
                   var buff = effect.diff.stat
-                      ? s.ship[effect.diff.stat.toLowerCase()]
+                      ? state.ship[effect.diff.stat.toLowerCase()]
                       : 0;
-                  return __assign(__assign({}, s), { ship: __assign(__assign({}, s.ship), (_a = {}, _a[stat] = s.ship[stat] + effect.diff.amount + buff, _a)) });
-              }, state);
+                  return __assign(__assign({}, ship), (_a = {}, _a[stat] = state.ship[stat] + effect.diff.amount + buff, _a));
+              }, state.ship);
+              return __assign(__assign({}, state), { ship: newShip, currentCard: {
+                      type: "INFO",
+                      name: action.choice.name,
+                      flavor: action.choice.flavor
+                  } });
           }
           case "RESET":
               return initialState;

@@ -2,7 +2,7 @@ import { h } from "preact";
 import { useState, useDispatch } from "../predux";
 
 const WorldDeck = () => {
-  const { worldDeck } = useState();
+  const { worldDeck, currentCard } = useState();
   const dispatch = useDispatch();
 
   return h(
@@ -10,7 +10,9 @@ const WorldDeck = () => {
     {
       class: "card stack",
       onclick: () => {
-        dispatch({ type: "TURN_CARD" });
+        if (!currentCard) {
+          dispatch({ type: "TURN_CARD" });
+        }
       },
     },
     worldDeck.length
