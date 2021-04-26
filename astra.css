@@ -1,6 +1,7 @@
 html {
   --background-main: #343233; /*Brown*/
   --background-dark: #272526; /* Brown 25% black */
+  --background-lite: #3c3a3a;
   --normal-text: #efdab9; /* Dull yellow*/
   --bold-text: #ffffff; /*White*/
   --kinda-light-text: #8e8373; /* Light brown*/
@@ -8,8 +9,8 @@ html {
   --super-light-line: #4e4b4d;
   --primary-action: #ffd152; /* Stark yellow */
   --primary-active: #ffc31f;
-  --secondy-action: #78b0a0; /* icy blue */
-  --secondy-active: #42b393; /* icy blue */
+  --secondy-action: #61efce; /*#78b0a0;*/ /* icy blue */
+  --secondy-active: #45edc6; /* icy blue */
 
   /* green:#5cb166
   red:#c14e4e */
@@ -61,6 +62,10 @@ strong {
   color: var(--bold-text);
 }
 
+input {
+  background-color: var(--background-lite);
+}
+
 section {
   border: 1px solid var(--super-light-line);
   border-radius: 4px;
@@ -76,18 +81,18 @@ section {
 
 @keyframes glow {
   from {
-    box-shadow: 0 0 4px #42b393;
+    box-shadow: 0 0 4px #81c08b;
   }
 
   to {
-    box-shadow: 0 0 12px #42b393;
+    box-shadow: 0 0 12px #81c08b;
   }
 }
 
 #ship-health div.bar {
   height: 4px;
   width: 24px;
-  margin-right: -2px;
+  margin-right: 4px;
   border-radius: 4px;
   background-color: var(--super-light-line);
   display: inline-block;
@@ -97,7 +102,7 @@ section {
   transition-timing-function: ease-in-out;
 }
 #ship-health div.bar.on {
-  background-color: #88c795;
+  background-color: #81c08b; /* #88c795;*/
   animation-name: glow;
   animation-duration: 1.2s;
   animation-direction: alternate;

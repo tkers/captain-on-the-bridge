@@ -1,4 +1,5 @@
 import typescript from "@rollup/plugin-typescript";
+import resolve from "@rollup/plugin-node-resolve";
 
 export default {
   input: "src/index.ts",
@@ -7,5 +8,5 @@ export default {
     format: "umd",
     name: "COTB",
   },
-  plugins: [typescript()],
+  plugins: [typescript(), resolve()],
 };
