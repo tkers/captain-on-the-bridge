@@ -5,23 +5,25 @@ import { fighter, intercepter, cruiser } from "./ships";
 
 import ShipSelectCard from "./components/shipSelectCard";
 import ShipSummaryCard from "./components/shipSummaryCard";
-import ModuleSummaryCard from "./components/moduleSummaryCard";
+import WorldDeck from "./components/worldDeck";
+import CurrentCard from "./components/currentCard";
 
 const Game = () => {
   const { ship: myShip } = useState();
   if (!myShip) {
     return [
       h("h2", null, "Choose your starship:"),
-      h("center", null, [
-        h(ShipSelectCard, { ship: fighter }),
-        h(ShipSelectCard, { ship: intercepter }),
-        h(ShipSelectCard, { ship: cruiser }),
-      ]),
+      // h("center", null, [
+      h(ShipSelectCard, { ship: fighter }),
+      h(ShipSelectCard, { ship: intercepter }),
+      h(ShipSelectCard, { ship: cruiser }),
+      // ]),
     ];
   } else {
     return [
       h(ShipSummaryCard, { ship: myShip }),
-      h(ModuleSummaryCard, { ship: myShip }),
+      h("div", null, h(WorldDeck, null)),
+      h("div", null, h(CurrentCard, null)),
     ];
   }
 };

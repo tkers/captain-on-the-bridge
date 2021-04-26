@@ -1,7 +1,9 @@
 import { h } from "preact";
+import { ModuleCard } from "./ModuleSummaryCard";
 
 const ShipSummaryCard = ({ ship }) => {
-  return h("section", null, [
+  // return h("section", null, [
+  return [
     h("h2", null, ["Spacecraft: ", h("strong", null, ship.name)]),
     h("div", { id: "ship-health" }, [
       h("div", { class: "bar on", style: "animation-delay: 0s" }),
@@ -11,16 +13,13 @@ const ShipSummaryCard = ({ ship }) => {
       h("div", { class: "bar" }),
       h("div", { class: "bar" }),
     ]),
-    h("p", null, ship.flavor),
-    "Attack: ",
-    h("strong", null, ship.attack),
-    h("br", null),
-    "Defense: ",
-    h("strong", null, ship.defense),
-    h("br", null),
-    "Speed: ",
-    h("strong", null, ship.speed),
-  ]);
+    h(
+      "div",
+      { id: "ship-modules" },
+      ship.modules.map((m) => h(ModuleCard, { module: m }))
+    ),
+  ];
+  // ]);
 };
 
 export default ShipSummaryCard;

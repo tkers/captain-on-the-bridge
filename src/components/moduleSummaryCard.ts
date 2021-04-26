@@ -2,7 +2,7 @@ import { h } from "preact";
 
 import ModuleCost from "./moduleCost";
 
-const ModuleCard = ({ module }) => {
+export const ModuleCard = ({ module }) => {
   return h("div", { class: "card" }, [
     h("strong", null, module.name),
     h("p", null, module.flavor),

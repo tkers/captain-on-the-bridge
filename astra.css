@@ -55,7 +55,7 @@ nav {
 main {
   max-width: 800px;
   margin: 0 auto;
-  padding: 32px 64px;
+  padding: 8px 16px;
 }
 
 strong {
@@ -77,6 +77,16 @@ section {
   display: inline-block;
   position: relative;
   top: -12px;
+}
+
+#ship-modules {
+  white-space: nowrap;
+  overflow-x: scroll;
+  -webkit-overflow-scrolling: touch;
+  overflow-scrolling: touch;
+}
+#ship-modules .card {
+  white-space: initial;
 }
 
 @keyframes glow {
@@ -119,15 +129,18 @@ section {
   display: inline-block;
   /* min-height: 225px; */
   width: 160px;
-  border: 1px solid var(--super-light-line);
+  /* border: 1px solid var(--super-light-line); */
+  border: 1px solid transparent;
   border-radius: 8px;
-  margin: 16px;
+  margin: 8px;
   padding: 16px;
   cursor: pointer;
   text-align: left;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
 }
 .card:hover {
-  border-color: var(--secondy-active);
+  /* border-color: var(--secondy-active); */
+  border: 1px solid var(--super-light-line);
 }
 
 .card p {
@@ -139,13 +152,25 @@ section {
   color: var(--background-dark);
 }
 
+.card.stack {
+  height: 224px;
+  line-height: 224px;
+  text-align: center;
+  color: var(--super-light-text);
+  font-size: 32px;
+  font-style: normal;
+  font-weight: normal;
+  text-transform: lowercase;
+  font-variant: small-caps;
+  text-shadow: 0 -1px 0 #24191c;
+}
+
 table {
   border-collapse: collapse;
   text-align: center;
   margin: 32px auto;
   width: 80%;
 }
-
 th {
   border-bottom: 1px solid var(--super-light-line);
 }

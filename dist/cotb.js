@@ -102,30 +102,6 @@
       ]);
   };
 
-  var ShipSummaryCard = function (_a) {
-      var ship = _a.ship;
-      return a$1("section", null, [
-          a$1("h2", null, ["Spacecraft: ", a$1("strong", null, ship.name)]),
-          a$1("div", { id: "ship-health" }, [
-              a$1("div", { "class": "bar on", style: "animation-delay: 0s" }),
-              a$1("div", { "class": "bar on", style: "animation-delay: 0.2s" }),
-              a$1("div", { "class": "bar on", style: "animation-delay: 0.4s" }),
-              a$1("div", { "class": "bar on", style: "animation-delay: 0.6s" }),
-              a$1("div", { "class": "bar" }),
-              a$1("div", { "class": "bar" }),
-          ]),
-          a$1("p", null, ship.flavor),
-          "Attack: ",
-          a$1("strong", null, ship.attack),
-          a$1("br", null),
-          "Defense: ",
-          a$1("strong", null, ship.defense),
-          a$1("br", null),
-          "Speed: ",
-          a$1("strong", null, ship.speed),
-      ]);
-  };
-
   var DiceCost = function (_a) {
       var dice = _a.dice;
       switch (dice.kind) {
@@ -148,25 +124,54 @@
           : module.cost.values.map(function (v) { return a$1(DiceCost, { dice: v }); });
   };
 
-  var ModuleCard = function (_a) {
-      var module = _a.module;
-      return a$1("div", { "class": "card" }, [
-          a$1("strong", null, module.name),
-          a$1("p", null, module.flavor),
-          a$1(ModuleCost, { module: module }),
-      ]);
+  const ModuleCard = ({ module }) => {
+    return a$1("div", { class: "card" }, [
+      a$1("strong", null, module.name),
+      a$1("p", null, module.flavor),
+      a$1(ModuleCost, { module: module }),
+    ]);
   };
-  var ModuleSummaryCard = function (_a) {
+
+  var ShipSummaryCard = function (_a) {
       var ship = _a.ship;
-      return a$1("section", null, [
-          a$1("h2", null, [
-              "Modules ",
-              a$1("strong", null, ship.modules.length),
-              "/",
-              ship.moduleLimit,
+      // return h("section", null, [
+      return [
+          a$1("h2", null, ["Spacecraft: ", a$1("strong", null, ship.name)]),
+          a$1("div", { id: "ship-health" }, [
+              a$1("div", { "class": "bar on", style: "animation-delay: 0s" }),
+              a$1("div", { "class": "bar on", style: "animation-delay: 0.2s" }),
+              a$1("div", { "class": "bar on", style: "animation-delay: 0.4s" }),
+              a$1("div", { "class": "bar on", style: "animation-delay: 0.6s" }),
+              a$1("div", { "class": "bar" }),
+              a$1("div", { "class": "bar" }),
           ]),
           a$1("div", { id: "ship-modules" }, ship.modules.map(function (m) { return a$1(ModuleCard, { module: m }); })),
-      ]);
+      ];
+      // ]);
+  };
+
+  var amount = 12;
+  var margin = 8;
+  var WorldDeck = function () {
+      var dispatch = useDispatch();
+      var turnCard = function () { return dispatch({ type: "TURN_CARD" }); };
+      var stack = [];
+      var offset = (amount - 1) * margin;
+      for (var i = 0; i < amount; i++) {
+          stack.push(a$1("div", {
+              "class": "card stack",
+              style: "position:absolute; top: " + (offset - i * margin) + "px",
+              onclick: i === amount - 1 ? turnCard : undefined
+          }, "world"));
+      }
+      return a$1("div", { style: "position:relative" }, stack);
+  };
+
+  var CurrentCard = function () {
+      var currentCard = useState().currentCard;
+      return currentCard
+          ? a$1("div", { "class": "card stack", style: "position:relative; left: 250px" }, currentCard.text)
+          : null;
   };
 
   const Game = () => {
@@ -174,16 +179,17 @@
     if (!myShip) {
       return [
         a$1("h2", null, "Choose your starship:"),
-        a$1("center", null, [
-          a$1(ShipSelectCard, { ship: fighter }),
-          a$1(ShipSelectCard, { ship: intercepter }),
-          a$1(ShipSelectCard, { ship: cruiser }),
-        ]),
+        // h("center", null, [
+        a$1(ShipSelectCard, { ship: fighter }),
+        a$1(ShipSelectCard, { ship: intercepter }),
+        a$1(ShipSelectCard, { ship: cruiser }),
+        // ]),
       ];
     } else {
       return [
         a$1(ShipSummaryCard, { ship: myShip }),
-        a$1(ModuleSummaryCard, { ship: myShip }),
+        a$1("div", null, a$1(WorldDeck, null)),
+        a$1("div", null, a$1(CurrentCard, null)),
       ];
     }
   };
@@ -215,12 +221,16 @@
   };
 
   var initialState = {
-      ship: null
+      ship: null,
+      worldDeck: [{ text: "A" }, { text: "B" }, { text: "C" }, { text: "D" }],
+      currentCard: null
   };
   var reducer = function (state, action) {
       switch (action.type) {
           case "SELECT_SHIP":
               return __assign(__assign({}, state), { ship: action.ship });
+          case "TURN_CARD":
+              return __assign(__assign({}, state), { currentCard: state.worldDeck[0], worldDeck: state.worldDeck.slice(1) });
           case "RESET":
               return initialState;
           default:
