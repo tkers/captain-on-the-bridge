@@ -1,9 +1,12 @@
 import { h } from "preact";
-import { useState } from "preact/hooks";
 
+import { useState, useDispatch } from "./predux";
 import { fighter, intercepter, cruiser } from "./ships";
 
-const ShipSelectCard = ({ ship, onSelect }) => {
+const ShipSelectCard = ({ ship }) => {
+  const dispatch = useDispatch();
+  const onLaunch = () => dispatch({ type: "SELECT_SHIP", ship });
+
   return h("div", { class: "card" }, [
     h("strong", null, ship.name),
     h("p", null, ship.flavor),
@@ -19,7 +22,7 @@ const ShipSelectCard = ({ ship, onSelect }) => {
         h("td", null, ship.speed),
       ]),
     ]),
-    h("button", { class: "snd", onclick: () => onSelect(ship) }, "Launch!"),
+    h("button", { class: "snd", onclick: onLaunch }, "Launch!"),
   ]);
 };
 
@@ -90,14 +93,14 @@ const ModuleSummaryCard = ({ ship }) => {
 };
 
 const Game = () => {
-  const [myShip, selectShip] = useState(null);
+  const { ship: myShip } = useState();
   if (!myShip) {
     return [
       h("h2", null, "Choose your starship:"),
       h("center", null, [
-        h(ShipSelectCard, { ship: fighter, onSelect: selectShip }),
-        h(ShipSelectCard, { ship: intercepter, onSelect: selectShip }),
-        h(ShipSelectCard, { ship: cruiser, onSelect: selectShip }),
+        h(ShipSelectCard, { ship: fighter }),
+        h(ShipSelectCard, { ship: intercepter }),
+        h(ShipSelectCard, { ship: cruiser }),
       ]),
     ];
   } else {
