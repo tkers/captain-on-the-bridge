@@ -10,7 +10,7 @@ import CurrentCard from "./components/currentCard";
 import DiceSection from "./components/diceSection";
 import EnemyDiceSection from "./components/enemyDiceSection";
 
-const Game = () => {
+const View = () => {
   const { ship: myShip, inBattle, myTurn } = useState();
   if (!myShip) {
     return [
@@ -27,6 +27,14 @@ const Game = () => {
       inBattle ? (myTurn ? h(DiceSection, null) : h(EnemyDiceSection)) : null,
     ];
   }
+};
+
+const Game = () => {
+  const { inBattle, myTurn } = useState();
+  return [
+    h("nav", { class: inBattle ? (myTurn ? "warn" : "alert") : "safe" }),
+    h("main", null, h(View, null)),
+  ];
 };
 
 export default Game;

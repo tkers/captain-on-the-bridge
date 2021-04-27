@@ -46,12 +46,19 @@ nav {
   height: 4px;
   margin: 0;
   padding: 0;
-  background-color: var(--secondy-action);
   animation-name: pulse;
   animation-duration: 8s;
   animation-iteration-count: infinite;
 }
-
+nav.safe {
+  background-color: var(--secondy-action);
+}
+nav.warn {
+  background-color: var(--primary-action);
+}
+nav.alert {
+  background-color: #ff5252;
+}
 main {
   max-width: 1000px;
   margin: 0 auto;

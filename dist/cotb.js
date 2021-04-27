@@ -557,7 +557,7 @@
       ]);
   };
 
-  const Game = () => {
+  const View = () => {
     const { ship: myShip, inBattle, myTurn } = useState();
     if (!myShip) {
       return [
@@ -574,6 +574,14 @@
         inBattle ? (myTurn ? a$1(DiceSection, null) : a$1(EnemyDiceSection)) : null,
       ];
     }
+  };
+
+  const Game = () => {
+    const { inBattle, myTurn } = useState();
+    return [
+      a$1("nav", { class: inBattle ? (myTurn ? "warn" : "alert") : "safe" }),
+      a$1("main", null, a$1(View, null)),
+    ];
   };
 
   /*! *****************************************************************************
