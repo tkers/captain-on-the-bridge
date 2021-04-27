@@ -328,3 +328,29 @@ button:hover.snd {
   background-color: var(--secondy-active);
   box-shadow: 0 0 6px -2px var(--secondy-action);
 }
+
+main {
+  min-height: 640px;
+}
+footer {
+  margin: 32px auto;
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 500px;
+  background-color: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(0, 0, 0, 0.3) inset;
+  color: #8e8373;
+  font-size: 12px;
+}
+footer a {
+  color: #efdab9;
+  text-decoration: none;
+}
+footer a:hover {
+  color: #ffd152;
+}
+footer strong {
+  color: rgba(0, 0, 0, 0.75);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.1);
+  margin: 0 2px;
+}

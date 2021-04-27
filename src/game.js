@@ -29,11 +29,31 @@ const View = () => {
   }
 };
 
+const LDFooter = () => {
+  return h(
+    "center",
+    null,
+    h("footer", null, [
+      "Captain on the Bridge ",
+      h("strong", null, "•"),
+      " LD48 version ",
+      h("strong", null, "•"),
+      " ",
+      h(
+        "a",
+        { href: "https://github.com/tkers/captain-on-the-bridge" },
+        "Source"
+      ),
+    ])
+  );
+};
+
 const Game = () => {
   const { inBattle, myTurn } = useState();
   return [
     h("nav", { class: inBattle ? (myTurn ? "warn" : "alert") : "safe" }),
     h("main", null, h(View, null)),
+    h(LDFooter, null),
   ];
 };
 
