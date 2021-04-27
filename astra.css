@@ -261,6 +261,7 @@ table.movelist td {
   /* font-weight: bold; */
   font-size: 24px;
   cursor: pointer;
+  vertical-align: top;
 }
 .dice.rolled,
 .dice.placed {
@@ -269,6 +270,15 @@ table.movelist td {
   color: var(--normal-text);
   transition: transform 200ms;
   transition-timing-function: ease-in-out;
+}
+
+.dice.rolled {
+  box-shadow: 0px 4px 0px 0px var(--background-dark);
+}
+.dice.placed {
+  box-shadow: 0px 4px 0px 0px #0d0c0d;
+  position: relative;
+  top: -3px;
 }
 
 .dice:hover {
