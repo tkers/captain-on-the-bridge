@@ -46,13 +46,14 @@ export const reducer = (state, action) => {
       return state.worldDeck.length > 0
         ? {
             ...state,
-            score: state.score + 1,
+            score: state.currentCard ? state.score + 1 : state.score,
             currentCard: state.worldDeck[0],
             worldDeck: state.worldDeck.slice(1),
           }
         : {
             ...state,
             isWin: true,
+            score: state.score + 1,
           };
     case "INSTALL_ITEM":
       return {

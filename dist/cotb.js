@@ -748,7 +748,7 @@
               return __assign(__assign({}, state), { ship: action.ship });
           case "TURN_CARD":
               return state.worldDeck.length > 0
-                  ? __assign(__assign({}, state), { score: state.score + 1, currentCard: state.worldDeck[0], worldDeck: state.worldDeck.slice(1) }) : __assign(__assign({}, state), { isWin: true });
+                  ? __assign(__assign({}, state), { score: state.currentCard ? state.score + 1 : state.score, currentCard: state.worldDeck[0], worldDeck: state.worldDeck.slice(1) }) : __assign(__assign({}, state), { isWin: true, score: state.score + 1 });
           case "INSTALL_ITEM":
               return __assign(__assign({}, state), { ship: __assign(__assign({}, state.ship), { modules: __spreadArray([action.item], state.ship.modules) }), currentCard: {
                       type: "INFO",
