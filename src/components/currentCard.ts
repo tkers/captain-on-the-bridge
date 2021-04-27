@@ -128,7 +128,7 @@ const CurrentCard = () => {
             if (e.stat === "HEALTH") {
               return `[${e.diff.amount || ""}${
                 e.diff.amount && e.diff.stat ? "+" : ""
-              }${e.diff.stat ? abbrevStat(e.diff.stat) : ""} FIX]`;
+              }${e.diff.stat ? abbrevStat(e.diff.stat) : ""} HP]`;
             }
           } else {
             if (e.stat === "HEALTH") {

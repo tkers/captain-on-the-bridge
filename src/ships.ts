@@ -1,4 +1,4 @@
-import { Attack, laser, ion, missle, chargedLaser } from "./attacks";
+import { Attack, laser, droid, ion, missle, chargedLaser } from "./attacks";
 
 // type ShipClass = {
 //   atk: number;
@@ -28,7 +28,7 @@ export type Spacecraft = {
   modules: Module[];
 };
 
-export const fighter: Spacecraft = {
+export const fighter = (): Spacecraft => ({
   name: "Fighter",
   flavor:
     "A light and versatile ship. Good for taking out cruiser class vessels.",
@@ -38,10 +38,10 @@ export const fighter: Spacecraft = {
   moduleLimit: 3,
   health: 6,
   maxHealth: 6,
-  modules: [laser, ion],
-};
+  modules: [laser(), droid()],
+});
 
-export const intercepter: Spacecraft = {
+export const intercepter = (): Spacecraft => ({
   name: "Intercepter",
   flavor:
     "A fast but weak ship. Good for intercepting fighters and fleeing battles you can not win.",
@@ -51,10 +51,10 @@ export const intercepter: Spacecraft = {
   moduleLimit: 3,
   health: 5,
   maxHealth: 5,
-  modules: [laser],
-};
+  modules: [laser(), ion()],
+});
 
-export const cruiser: Spacecraft = {
+export const cruiser = (): Spacecraft => ({
   name: "Cruiser",
   flavor: "A simple but trustworthy star cruiser.",
   attack: 4,
@@ -63,5 +63,5 @@ export const cruiser: Spacecraft = {
   moduleLimit: 4,
   health: 8,
   maxHealth: 8,
-  modules: [laser, chargedLaser, missle],
-};
+  modules: [laser(), chargedLaser(), missle()],
+});

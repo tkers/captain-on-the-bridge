@@ -15,9 +15,9 @@ const Game = () => {
   if (!myShip) {
     return [
       h("h2", null, "Choose your starship:"),
-      h(ShipSelectCard, { ship: fighter }),
-      h(ShipSelectCard, { ship: intercepter }),
-      h(ShipSelectCard, { ship: cruiser }),
+      h(ShipSelectCard, { ship: fighter() }),
+      h(ShipSelectCard, { ship: intercepter() }),
+      h(ShipSelectCard, { ship: cruiser() }),
     ];
   } else {
     return [

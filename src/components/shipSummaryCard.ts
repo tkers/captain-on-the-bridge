@@ -1,5 +1,5 @@
 import { h } from "preact";
-import ModuleCard from "./ModuleSummaryCard";
+import ModuleCard from "./ModuleCard";
 import { useState } from "../predux";
 
 const ShipSummaryCard = ({ ship }) => {
@@ -23,7 +23,7 @@ const ShipSummaryCard = ({ ship }) => {
     h(
       "div",
       { id: "ship-modules" },
-      ship.modules.map((m) => h(ModuleCard, { module: m }))
+      ship.modules.map((m, ix) => h(ModuleCard, { module: m, index: ix }))
     ),
   ];
   // ]);

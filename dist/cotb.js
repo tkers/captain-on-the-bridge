@@ -17,25 +17,31 @@
   const useState = () => F(Predux)[0];
   const useDispatch = () => F(Predux)[1];
 
-  var laser = {
+  var laser = function () { return ({
       name: "Standard Laser",
       flavor: "A simple but trustworthy laser cannon",
-      cost: { kind: "SHAPE", values: [{ kind: "ALL" }] },
+      cost: { kind: "SHAPE", values: [{ kind: "ALL" }], assigned: [] },
       damage: { kind: "FIXED", amount: 3 }
-  };
-  var ion = {
+  }); };
+  var droid = function () { return ({
+      name: "Repair Droid",
+      flavor: "A friendly droid to repair your hull during battles",
+      cost: { kind: "SHAPE", values: [{ kind: "MAX", amount: 2 }], assigned: [] },
+      repair: { kind: "SUM" }
+  }); };
+  var ion = function () { return ({
       name: "Ion cannon",
       flavor: "Nothing special, but gets the job done",
-      cost: { kind: "SHAPE", values: [{ kind: "ODD" }] },
+      cost: { kind: "SHAPE", values: [{ kind: "ODD" }], assigned: [] },
       damage: { kind: "SUM" }
-  };
-  var chargedLaser = {
+  }); };
+  var chargedLaser = function () { return ({
       name: "Charged Laser",
       flavor: "Heavy duty laser. Needs time to charge, but does a lot of damage.",
-      cost: { kind: "TOTAL", amount: 24 },
+      cost: { kind: "TOTAL", amount: 24, assigned: 0 },
       damage: { kind: "FIXED", amount: 9 }
-  };
-  var missle = {
+  }); };
+  var missle = function () { return ({
       name: "Medium-range missles",
       flavor: "Good 'ol missles to deal a good amount of damage",
       cost: {
@@ -43,12 +49,13 @@
           values: [
               { kind: "MIN", amount: 4 },
               { kind: "MIN", amount: 4 },
-          ]
+          ],
+          assigned: []
       },
       damage: { kind: "FIXED", amount: 6 }
-  };
+  }); };
 
-  var fighter = {
+  var fighter = function () { return ({
       name: "Fighter",
       flavor: "A light and versatile ship. Good for taking out cruiser class vessels.",
       attack: 5,
@@ -57,9 +64,9 @@
       moduleLimit: 3,
       health: 6,
       maxHealth: 6,
-      modules: [laser, ion]
-  };
-  var intercepter = {
+      modules: [laser(), droid()]
+  }); };
+  var intercepter = function () { return ({
       name: "Intercepter",
       flavor: "A fast but weak ship. Good for intercepting fighters and fleeing battles you can not win.",
       attack: 3,
@@ -68,9 +75,9 @@
       moduleLimit: 3,
       health: 5,
       maxHealth: 5,
-      modules: [laser]
-  };
-  var cruiser = {
+      modules: [laser(), ion()]
+  }); };
+  var cruiser = function () { return ({
       name: "Cruiser",
       flavor: "A simple but trustworthy star cruiser.",
       attack: 4,
@@ -79,8 +86,8 @@
       moduleLimit: 4,
       health: 8,
       maxHealth: 8,
-      modules: [laser, chargedLaser, missle]
-  };
+      modules: [laser(), chargedLaser(), missle()]
+  }); };
 
   var ShipSelectCard = function (_a) {
       var ship = _a.ship;
@@ -116,21 +123,25 @@
       }
       switch (dice.kind) {
           case "ALL":
-              return a$1("div", { "class": "dice", onclick: onclick }, "*");
+              return a$1("div", { "class": "dice", onclick: onclick }, " ");
+          case "EQL":
+              return a$1("div", { "class": "dice", onclick: onclick }, dice.amount);
           case "ODD":
               return a$1("div", { "class": "dice", onclick: onclick }, "ODD");
           case "EVEN":
               return a$1("div", { "class": "dice", onclick: onclick }, "EVEN");
           case "MIN":
-              return a$1("div", { "class": "dice", onclick: onclick }, [dice.amount, ">"]);
+              return a$1("div", { "class": "dice", onclick: onclick }, [dice.amount, "+"]);
           case "MAX":
-              return a$1("div", { "class": "dice", onclick: onclick }, [dice.amount, "<"]);
+              return a$1("div", { "class": "dice", onclick: onclick }, [dice.amount, "-"]);
       }
   };
   var fits = function (dice, req) {
       switch (req.kind) {
           case "ALL":
               return true;
+          case "EQL":
+              return dice === req.amount;
           case "ODD":
               return dice % 2 === 1;
           case "EVEN":
@@ -142,34 +153,74 @@
       }
   };
   var ModuleCost = function (_a) {
-      var module = _a.module;
-      var _b = l({}), connectedDice = _b[0], setConnectedDice = _b[1];
-      var _c = useState(), dice = _c.dice, selectedDice = _c.selectedDice;
+      var module = _a.module, index = _a.index;
+      var _b = useState(), dice = _b.dice, selectedDice = _b.selectedDice;
+      var dispatch = useDispatch();
       var placeDice = function (ix) {
-          var _a;
           if (selectedDice === null)
               return;
-          if (module.cost.kind === "TOTAL") ;
+          if (module.cost.kind === "TOTAL") {
+              dispatch({ type: "ASSIGN_DICE", moduleIndex: index, diceIndex: ix });
+          }
           else if (fits(dice[selectedDice], module.cost.values[ix])) {
-              setConnectedDice((_a = {}, _a[ix] = dice[selectedDice], _a));
+              dispatch({ type: "ASSIGN_DICE", moduleIndex: index, diceIndex: ix });
           }
       };
       return module.cost.kind === "TOTAL"
-          ? [a$1("div", { "class": "dice" }, "+"), module.cost.amount, " remaining"]
+          ? [
+              a$1("div", { "class": "dice", onclick: function () { return placeDice(0); } }, "+"),
+              " ",
+              Math.max(0, module.cost.amount - module.cost.assigned),
+              " remaining",
+          ]
           : module.cost.values.map(function (v, ix) {
               return a$1(DiceCost, {
                   dice: v,
                   onclick: function () { return placeDice(ix); },
-                  current: connectedDice[ix]
+                  current: module.cost.assigned[ix]
               });
           });
   };
 
-  const ModuleCard = ({ module }) => {
+  const isModuleReady = (module) => {
+    if (module.cost.kind === "TOTAL") {
+      return module.cost.assigned >= module.cost.amount;
+    } else {
+      return module.cost.values.every((v, ix) => !!module.cost.assigned[ix]);
+    }
+  };
+
+  const getEffect = (module) => {
+    const attr = module.damage ? "DMG" : "HP";
+    const x = module.damage || module.repair;
+    const amount = x.kind === "SUM" ? "*" : x.amount;
+    return a$1("p", null, ["[", a$1("strong", null, [amount, " ", attr]), "]"]);
+  };
+
+  const ModuleCard = ({ module, index }) => {
+    const dispatch = useDispatch();
     return a$1("div", { class: "card" }, [
       a$1("strong", null, module.name),
       a$1("p", null, module.flavor),
-      a$1("div", { class: "down" }, a$1(ModuleCost, { module: module })),
+      a$1("br", null),
+      getEffect(module),
+      a$1("div", { class: "down" }, [
+        a$1(ModuleCost, { module: module, index: index }),
+        a$1("br", null),
+        a$1("br", null),
+        a$1(
+          "button",
+          {
+            disabled: !isModuleReady(module),
+            onclick: () => {
+              if (isModuleReady(module)) {
+                dispatch({ type: "USE_WEAPON", index });
+              }
+            },
+          },
+          "Use"
+        ),
+      ]),
     ]);
   };
 
@@ -185,7 +236,7 @@
       return [
           a$1("h2", null, ["Spacecraft: ", a$1("strong", null, ship.name)]),
           a$1("div", { id: "ship-health" }, hpbar),
-          a$1("div", { id: "ship-modules" }, ship.modules.map(function (m) { return a$1(ModuleCard, { module: m }); })),
+          a$1("div", { id: "ship-modules" }, ship.modules.map(function (m, ix) { return a$1(ModuleCard, { module: m, index: ix }); })),
       ];
       // ]);
   };
@@ -284,7 +335,7 @@
                   var effect = m.effect.map(function (e) {
                       if (e.self) {
                           if (e.stat === "HEALTH") {
-                              return "[" + (e.diff.amount || "") + (e.diff.amount && e.diff.stat ? "+" : "") + (e.diff.stat ? abbrevStat_1(e.diff.stat) : "") + " FIX]";
+                              return "[" + (e.diff.amount || "") + (e.diff.amount && e.diff.stat ? "+" : "") + (e.diff.stat ? abbrevStat_1(e.diff.stat) : "") + " HP]";
                           }
                       }
                       else {
@@ -511,9 +562,9 @@
     if (!myShip) {
       return [
         a$1("h2", null, "Choose your starship:"),
-        a$1(ShipSelectCard, { ship: fighter }),
-        a$1(ShipSelectCard, { ship: intercepter }),
-        a$1(ShipSelectCard, { ship: cruiser }),
+        a$1(ShipSelectCard, { ship: fighter() }),
+        a$1(ShipSelectCard, { ship: intercepter() }),
+        a$1(ShipSelectCard, { ship: cruiser() }),
       ];
     } else {
       return [
@@ -557,7 +608,7 @@
       return to;
   }
 
-  var niftyTechnician = {
+  var niftyTechnician = function () { return ({
       type: "EVENT",
       name: "Nifty Technician",
       flavor: "Your Head Technician offers to redirect some of the shield enery to your hyperdrive.",
@@ -572,14 +623,14 @@
           },
           { name: "Too risky", flavor: "You keep your shields intact.", effect: [] },
       ]
-  };
-  var rustyLaser = {
+  }); };
+  var rustyLaser = function () { return ({
       type: "ITEM",
       name: "Rusty Laser",
       flavor: "You find a rusty laser cannon, it still appears to be functional",
-      item: laser
-  };
-  var spacePirate = {
+      item: laser()
+  }); };
+  var spacePirate = function () { return ({
       type: "ENCOUNTER",
       name: "Space Pirates",
       flavor: "Out of nowhere, a small vessel approaches. It's clearly not friendly.",
@@ -608,8 +659,8 @@
               effect: [{ self: false, stat: "HEALTH", diff: { amount: -4 } }]
           },
       ]
-  };
-  var rustyTurret = {
+  }); };
+  var rustyTurret = function () { return ({
       type: "ENCOUNTER",
       name: "Rusty Turret",
       flavor: "You approach a rusty turret. It does not look like much of a threat.",
@@ -638,18 +689,13 @@
               effect: [{ self: false, stat: "HEALTH", diff: { amount: -1 } }]
           },
       ]
-  };
+  }); };
 
-  var initialState = {
+  var getInitialState = function () { return ({
       ship: null,
       isDead: false,
       score: 0,
-      worldDeck: [
-          __assign({}, rustyLaser),
-          __assign({}, rustyTurret),
-          __assign({}, niftyTechnician),
-          __assign({}, spacePirate),
-      ],
+      worldDeck: [rustyLaser(), rustyTurret(), niftyTechnician(), spacePirate()],
       currentCard: null,
       inBattle: false,
       myTurn: true,
@@ -657,7 +703,7 @@
       maxDice: 3,
       dice: [],
       selectedDice: null
-  };
+  }); };
   var reducer = function (state, action) {
       switch (action.type) {
           case "SELECT_SHIP":
@@ -692,13 +738,65 @@
                       flavor: "You managed to get away from the " + action.enemy.name + ", but not before they managed to hit you with a laser beam."
                   } });
           case "BATTLE_STATIONS":
-              return __assign(__assign({}, state), { inBattle: true, canRoll: true, myTurn: true });
+              return __assign(__assign({}, state), { inBattle: true, dice: [], canRoll: true, myTurn: true });
           case "ROLL_DICE":
               return __assign(__assign({}, state), { dice: action.dice, canRoll: false, selectedDice: null });
           case "SELECT_DICE":
               return __assign(__assign({}, state), { selectedDice: action.index });
+          case "ASSIGN_DICE":
+              return __assign(__assign({}, state), { dice: state.dice.filter(function (d, ix) { return ix !== state.selectedDice; }), selectedDice: null, ship: __assign(__assign({}, state.ship), { modules: state.ship.modules.map(function (m, ix) {
+                          if (ix === action.moduleIndex) {
+                              if (m.cost.kind === "TOTAL") {
+                                  return __assign(__assign({}, m), { cost: __assign(__assign({}, m.cost), { assigned: m.cost.assigned + state.dice[state.selectedDice] }) });
+                              }
+                              else {
+                                  var newAssigned = m.cost.assigned;
+                                  newAssigned[action.diceIndex] = state.dice[state.selectedDice];
+                                  return __assign(__assign({}, m), { cost: __assign(__assign({}, m.cost), { assigned: newAssigned }) });
+                              }
+                          }
+                          else {
+                              return m;
+                          }
+                      }) }) });
+          case "USE_WEAPON": {
+              var mod = state.ship.modules[action.index];
+              var sumAll = function (assigned) {
+                  return assigned instanceof Array
+                      ? assigned.reduce(function (a, x) { return a + x; }, 0)
+                      : assigned;
+              };
+              var damage = mod.damage
+                  ? mod.damage.kind === "FIXED"
+                      ? mod.damage.amount
+                      : sumAll(mod.cost.assigned)
+                  : 0;
+              var repair = mod.repair
+                  ? mod.repair.kind === "FIXED"
+                      ? mod.repair.amount
+                      : sumAll(mod.cost.assigned)
+                  : 0;
+              var newEnemy_1 = damage
+                  ? __assign(__assign({}, state.currentCard), { health: state.currentCard.health - damage }) : state.currentCard;
+              var newShip = repair
+                  ? __assign(__assign({}, state.ship), { health: state.ship.health + repair }) : state.ship;
+              var wonbattle = newEnemy_1.health > 0
+                  ? {}
+                  : {
+                      inBattle: false,
+                      currentCard: {
+                          type: "INFO",
+                          name: "Victory!",
+                          flavor: "You defeated the " + state.currentCard.name
+                      }
+                  };
+              return __assign(__assign(__assign({}, state), { currentCard: newEnemy_1, ship: __assign(__assign({}, newShip), { modules: state.ship.modules.map(function (m, ix) {
+                          return ix === action.index || newEnemy_1.health <= 0
+                              ? __assign(__assign({}, m), { cost: __assign(__assign({}, m.cost), { assigned: m.cost.kind === "TOTAL" ? 0 : [] }) }) : m;
+                      }) }) }), wonbattle);
+          }
           case "END_TURN":
-              return __assign(__assign({}, state), { myTurn: false, dice: [], selectedDice: null });
+              return __assign(__assign({}, state), { myTurn: false, dice: [], selectedDice: null, ship: __assign(__assign({}, state.ship), { modules: state.ship.modules.map(function (m) { return (__assign(__assign({}, m), { cost: __assign(__assign({}, m.cost), { assigned: m.cost.kind === "TOTAL" ? m.cost.assigned : [] }) })); }) }) });
           case "ENEMY_MOVE": {
               var newShip = action.move.effect
                   .filter(function (e) { return !e.self; })
@@ -729,7 +827,7 @@
               return __assign(__assign(__assign({}, state), { ship: newShip, currentCard: newCurrentCard, myTurn: true, canRoll: true }), gameover);
           }
           case "REPLAY":
-              return initialState;
+              return getInitialState();
           default:
               throw new Error("Unexpected action type " + action.type);
       }
@@ -737,6 +835,7 @@
 
   window.addEventListener("load", function () {
       var root = document.getElementById("root");
+      var initialState = getInitialState();
       N(a$1(PreduxProvider, { initialState: initialState, reducer: reducer }, a$1(Game, null)), root);
   });
 

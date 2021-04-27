@@ -1,7 +1,7 @@
 import { Attack } from "./attacks";
 
 type Stat = "ATTACK" | "DEFENSE" | "SPEED" | "HEALTH";
-type MoveEffect = {
+export type MoveEffect = {
   self: boolean;
   stat: Stat;
   diff: { amount?: number; stat?: Stat };
@@ -63,7 +63,7 @@ export type Deck = Card[];
 
 import { laser } from "./attacks";
 
-export const niftyTechnician: EventCard = {
+export const niftyTechnician = (): EventCard => ({
   type: "EVENT",
   name: "Nifty Technician",
   flavor:
@@ -79,16 +79,16 @@ export const niftyTechnician: EventCard = {
     },
     { name: "Too risky", flavor: "You keep your shields intact.", effect: [] },
   ],
-};
+});
 
-export const rustyLaser: ItemCard = {
+export const rustyLaser = (): ItemCard => ({
   type: "ITEM",
   name: "Rusty Laser",
   flavor: "You find a rusty laser cannon, it still appears to be functional",
-  item: laser,
-};
+  item: laser(),
+});
 
-export const spacePirate: EncounterCard = {
+export const spacePirate = (): EncounterCard => ({
   type: "ENCOUNTER",
   name: "Space Pirates",
   flavor:
@@ -118,9 +118,9 @@ export const spacePirate: EncounterCard = {
       effect: [{ self: false, stat: "HEALTH", diff: { amount: -4 } }],
     },
   ],
-};
+});
 
-export const rustyTurret: EncounterCard = {
+export const rustyTurret = (): EncounterCard => ({
   type: "ENCOUNTER",
   name: "Rusty Turret",
   flavor:
@@ -150,4 +150,4 @@ export const rustyTurret: EncounterCard = {
       effect: [{ self: false, stat: "HEALTH", diff: { amount: -1 } }],
     },
   ],
-};
+});

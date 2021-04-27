@@ -22,16 +22,11 @@ type State = {
   selectedDice?: number;
 };
 
-export const initialState: State = {
+export const getInitialState = (): State => ({
   ship: null,
   isDead: false,
   score: 0,
-  worldDeck: [
-    { ...rustyLaser },
-    { ...rustyTurret },
-    { ...niftyTechnician },
-    { ...spacePirate },
-  ],
+  worldDeck: [rustyLaser(), rustyTurret(), niftyTechnician(), spacePirate()],
   currentCard: null,
   inBattle: false,
   myTurn: true,
@@ -39,7 +34,7 @@ export const initialState: State = {
   maxDice: 3,
   dice: [],
   selectedDice: null,
-};
+});
 
 export const reducer = (state, action) => {
   switch (action.type) {
@@ -98,6 +93,7 @@ export const reducer = (state, action) => {
       return {
         ...state,
         inBattle: true,
+        dice: [],
         canRoll: true,
         myTurn: true,
       };
@@ -110,8 +106,111 @@ export const reducer = (state, action) => {
       };
     case "SELECT_DICE":
       return { ...state, selectedDice: action.index };
+    case "ASSIGN_DICE":
+      return {
+        ...state,
+        dice: state.dice.filter((d, ix) => ix !== state.selectedDice),
+        selectedDice: null,
+        ship: {
+          ...state.ship,
+          modules: state.ship.modules.map((m, ix) => {
+            if (ix === action.moduleIndex) {
+              if (m.cost.kind === "TOTAL") {
+                return {
+                  ...m,
+                  cost: {
+                    ...m.cost,
+                    assigned: m.cost.assigned + state.dice[state.selectedDice],
+                  },
+                };
+              } else {
+                const newAssigned = m.cost.assigned;
+                newAssigned[action.diceIndex] = state.dice[state.selectedDice];
+                return { ...m, cost: { ...m.cost, assigned: newAssigned } };
+              }
+            } else {
+              return m;
+            }
+          }),
+        },
+      };
+    case "USE_WEAPON": {
+      const mod = state.ship.modules[action.index];
+
+      const sumAll = (assigned) =>
+        assigned instanceof Array
+          ? assigned.reduce((a, x) => a + x, 0)
+          : assigned;
+
+      const damage = mod.damage
+        ? mod.damage.kind === "FIXED"
+          ? mod.damage.amount
+          : sumAll(mod.cost.assigned)
+        : 0;
+
+      const repair = mod.repair
+        ? mod.repair.kind === "FIXED"
+          ? mod.repair.amount
+          : sumAll(mod.cost.assigned)
+        : 0;
+
+      const newEnemy = damage
+        ? { ...state.currentCard, health: state.currentCard.health - damage }
+        : state.currentCard;
+
+      const newShip = repair
+        ? { ...state.ship, health: state.ship.health + repair }
+        : state.ship;
+
+      const wonbattle =
+        newEnemy.health > 0
+          ? {}
+          : {
+              inBattle: false,
+              currentCard: {
+                type: "INFO",
+                name: "Victory!",
+                flavor: `You defeated the ${state.currentCard.name}`,
+              },
+            };
+
+      return {
+        ...state,
+        currentCard: newEnemy,
+        ship: {
+          ...newShip,
+          modules: state.ship.modules.map((m, ix) =>
+            ix === action.index || newEnemy.health <= 0
+              ? {
+                  ...m,
+                  cost: {
+                    ...m.cost,
+                    assigned: m.cost.kind === "TOTAL" ? 0 : [],
+                  },
+                }
+              : m
+          ),
+        },
+        ...wonbattle,
+      };
+    }
     case "END_TURN":
-      return { ...state, myTurn: false, dice: [], selectedDice: null };
+      return {
+        ...state,
+        myTurn: false,
+        dice: [],
+        selectedDice: null,
+        ship: {
+          ...state.ship,
+          modules: state.ship.modules.map((m) => ({
+            ...m,
+            cost: {
+              ...m.cost,
+              assigned: m.cost.kind === "TOTAL" ? m.cost.assigned : [],
+            },
+          })),
+        },
+      };
     case "ENEMY_MOVE": {
       const newShip = action.move.effect
         .filter((e) => !e.self)
@@ -157,7 +256,7 @@ export const reducer = (state, action) => {
       };
     }
     case "REPLAY":
-      return initialState;
+      return getInitialState();
     default:
       throw new Error(`Unexpected action type ${action.type}`);
   }
