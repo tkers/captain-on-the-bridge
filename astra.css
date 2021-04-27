@@ -95,14 +95,15 @@ section.dicearea {
   top: -12px;
 }
 
-#ship-modules {
+.row {
   white-space: nowrap;
   overflow-x: scroll;
   -webkit-overflow-scrolling: touch;
   overflow-scrolling: touch;
   padding-bottom: 16px;
 }
-#ship-modules .card {
+
+.row .card {
   white-space: initial;
 }
 
@@ -315,10 +316,10 @@ button:hover {
 button:disabled {
   filter: grayscale(0.8);
 }
-#ship-modules button:disabled {
+.ship-modules button:disabled {
   background-color: var(--super-light-text);
 }
-#ship-modules button:disabled:hover {
+.ship-modules button:disabled:hover {
   box-shadow: none;
 }
 button.snd {

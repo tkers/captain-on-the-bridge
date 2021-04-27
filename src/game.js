@@ -15,16 +15,20 @@ const View = () => {
   if (!myShip) {
     return [
       h("h2", null, "Choose your starship:"),
-      h(ShipSelectCard, { ship: fighter() }),
-      h(ShipSelectCard, { ship: intercepter() }),
-      h(ShipSelectCard, { ship: cruiser() }),
+      h("div", { class: "row" }, [
+        h(ShipSelectCard, { ship: fighter() }),
+        h(ShipSelectCard, { ship: intercepter() }),
+        h(ShipSelectCard, { ship: cruiser() }),
+      ]),
     ];
   } else {
     return [
       h(ShipSummaryCard, { ship: myShip }),
-      h(WorldDeck, null),
-      h(CurrentCard, null),
-      inBattle ? (myTurn ? h(DiceSection, null) : h(EnemyDiceSection)) : null,
+      h("div", { class: "row" }, [
+        h(WorldDeck, null),
+        h(CurrentCard, null),
+        inBattle ? (myTurn ? h(DiceSection, null) : h(EnemyDiceSection)) : null,
+      ]),
     ];
   }
 };

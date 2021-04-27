@@ -236,7 +236,7 @@
       return [
           a$1("h2", null, ["Spacecraft: ", a$1("strong", null, ship.name)]),
           a$1("div", { id: "ship-health" }, hpbar),
-          a$1("div", { id: "ship-modules" }, ship.modules.map(function (m, ix) { return a$1(ModuleCard, { module: m, index: ix }); })),
+          a$1("div", { "class": "ship-modules row" }, ship.modules.map(function (m, ix) { return a$1(ModuleCard, { module: m, index: ix }); })),
       ];
       // ]);
   };
@@ -569,16 +569,20 @@
     if (!myShip) {
       return [
         a$1("h2", null, "Choose your starship:"),
-        a$1(ShipSelectCard, { ship: fighter() }),
-        a$1(ShipSelectCard, { ship: intercepter() }),
-        a$1(ShipSelectCard, { ship: cruiser() }),
+        a$1("div", { class: "row" }, [
+          a$1(ShipSelectCard, { ship: fighter() }),
+          a$1(ShipSelectCard, { ship: intercepter() }),
+          a$1(ShipSelectCard, { ship: cruiser() }),
+        ]),
       ];
     } else {
       return [
         a$1(ShipSummaryCard, { ship: myShip }),
-        a$1(WorldDeck, null),
-        a$1(CurrentCard, null),
-        inBattle ? (myTurn ? a$1(DiceSection, null) : a$1(EnemyDiceSection)) : null,
+        a$1("div", { class: "row" }, [
+          a$1(WorldDeck, null),
+          a$1(CurrentCard, null),
+          inBattle ? (myTurn ? a$1(DiceSection, null) : a$1(EnemyDiceSection)) : null,
+        ]),
       ];
     }
   };

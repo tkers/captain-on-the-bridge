@@ -22,7 +22,7 @@ const ShipSummaryCard = ({ ship }) => {
     h("div", { id: "ship-health" }, hpbar),
     h(
       "div",
-      { id: "ship-modules" },
+      { class: "ship-modules row" },
       ship.modules.map((m, ix) => h(ModuleCard, { module: m, index: ix }))
     ),
   ];
