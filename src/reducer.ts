@@ -11,6 +11,7 @@ import { Spacecraft } from "./ships";
 type State = {
   ship?: Spacecraft;
   isDead: boolean;
+  isWin: boolean;
   score: number;
   worldDeck: Deck;
   currentCard?: Card;
@@ -25,6 +26,7 @@ type State = {
 export const getInitialState = (): State => ({
   ship: null,
   isDead: false,
+  isWin: false,
   score: 0,
   worldDeck: [rustyLaser(), rustyTurret(), niftyTechnician(), spacePirate()],
   currentCard: null,
@@ -41,12 +43,17 @@ export const reducer = (state, action) => {
     case "SELECT_SHIP":
       return { ...state, ship: action.ship };
     case "TURN_CARD":
-      return {
-        ...state,
-        score: state.score + 1,
-        currentCard: state.worldDeck[0],
-        worldDeck: state.worldDeck.slice(1),
-      };
+      return state.worldDeck.length > 0
+        ? {
+            ...state,
+            score: state.score + 1,
+            currentCard: state.worldDeck[0],
+            worldDeck: state.worldDeck.slice(1),
+          }
+        : {
+            ...state,
+            isWin: true,
+          };
     case "INSTALL_ITEM":
       return {
         ...state,
@@ -159,7 +166,10 @@ export const reducer = (state, action) => {
         : state.currentCard;
 
       const newShip = repair
-        ? { ...state.ship, health: state.ship.health + repair }
+        ? {
+            ...state.ship,
+            health: Math.min(state.ship.health + repair, state.ship.maxHealth),
+          }
         : state.ship;
 
       const wonbattle =
@@ -237,6 +247,11 @@ export const reducer = (state, action) => {
             [stat]: state.currentCard[stat] + effect.diff.amount + buff,
           };
         }, state.currentCard);
+
+      newCurrentCard.health = Math.min(
+        newCurrentCard.health,
+        newCurrentCard.maxHealth
+      );
 
       const gameover =
         newShip.health > 0

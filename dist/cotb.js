@@ -21,7 +21,7 @@
       name: "Standard Laser",
       flavor: "A simple but trustworthy laser cannon",
       cost: { kind: "SHAPE", values: [{ kind: "ALL" }], assigned: [] },
-      damage: { kind: "FIXED", amount: 3 }
+      damage: { kind: "FIXED", amount: 2 }
   }); };
   var droid = function () { return ({
       name: "Repair Droid",
@@ -38,8 +38,8 @@
   var chargedLaser = function () { return ({
       name: "Charged Laser",
       flavor: "Heavy duty laser. Needs time to charge, but does a lot of damage.",
-      cost: { kind: "TOTAL", amount: 24, assigned: 0 },
-      damage: { kind: "FIXED", amount: 9 }
+      cost: { kind: "TOTAL", amount: 12, assigned: 0 },
+      damage: { kind: "FIXED", amount: 6 }
   }); };
   var missle = function () { return ({
       name: "Medium-range missles",
@@ -47,12 +47,12 @@
       cost: {
           kind: "SHAPE",
           values: [
-              { kind: "MIN", amount: 4 },
-              { kind: "MIN", amount: 4 },
+              { kind: "EQL", amount: 6 },
+              { kind: "EQL", amount: 6 },
           ],
           assigned: []
       },
-      damage: { kind: "FIXED", amount: 6 }
+      damage: { kind: "FIXED", amount: 8 }
   }); };
 
   var fighter = function () { return ({
@@ -258,17 +258,24 @@
     arr.reduce((a, v) => [...a, v, sep], []).slice(0, -1);
 
   var CurrentCard = function () {
-      var _a = useState(), card = _a.currentCard, inBattle = _a.inBattle, isDead = _a.isDead, score = _a.score;
+      var _a = useState(), card = _a.currentCard, inBattle = _a.inBattle, isDead = _a.isDead, isWin = _a.isWin, score = _a.score;
       if (!card && !isDead)
           return null;
       var dispatch = useDispatch();
-      if (isDead) {
+      if (isWin) {
+          return a$1("div", { "class": "card current" }, a$1("strong", null, "\uD83D\uDE80 Victory"), a$1("p", null, "You explored the entire universe and lived to tell the story! Your adventure lasted ", a$1("strong", null, score), " days."), a$1("div", { "class": "down" }, a$1("button", {
+              onclick: function () {
+                  dispatch({ type: "REPLAY" });
+              }
+          }, "New Adventure?")));
+      }
+      else if (isDead) {
           return a$1("div", { "class": "card current" }, a$1("strong", null, "\uD83D\uDCA5 Game Over"), a$1("p", null, "Your ship got destroyed in a heroic battle. Your latest adventure lasted ", a$1("strong", null, score), " days."), a$1("div", { "class": "down" }, a$1("button", {
               "class": "snd",
               onclick: function () {
                   dispatch({ type: "REPLAY" });
               }
-          }, "Replay")));
+          }, "Try Again?")));
       }
       else if (card.type === "INFO") {
           return a$1("div", { "class": "card current" }, a$1("strong", null, "\u2604\uFE0F " + card.name), a$1("p", null, card.flavor), a$1("div", { "class": "down" }, a$1("button", {
@@ -645,8 +652,8 @@
       attack: 5,
       defense: 2,
       speed: 5,
-      health: 3,
-      maxHealth: 3,
+      health: 12,
+      maxHealth: 12,
       moves: [
           undefined,
           undefined,
@@ -675,8 +682,8 @@
       attack: 1,
       defense: 4,
       speed: 0,
-      health: 2,
-      maxHealth: 2,
+      health: 5,
+      maxHealth: 5,
       moves: [
           undefined,
           undefined,
@@ -702,6 +709,7 @@
   var getInitialState = function () { return ({
       ship: null,
       isDead: false,
+      isWin: false,
       score: 0,
       worldDeck: [rustyLaser(), rustyTurret(), niftyTechnician(), spacePirate()],
       currentCard: null,
@@ -717,7 +725,8 @@
           case "SELECT_SHIP":
               return __assign(__assign({}, state), { ship: action.ship });
           case "TURN_CARD":
-              return __assign(__assign({}, state), { score: state.score + 1, currentCard: state.worldDeck[0], worldDeck: state.worldDeck.slice(1) });
+              return state.worldDeck.length > 0
+                  ? __assign(__assign({}, state), { score: state.score + 1, currentCard: state.worldDeck[0], worldDeck: state.worldDeck.slice(1) }) : __assign(__assign({}, state), { isWin: true });
           case "INSTALL_ITEM":
               return __assign(__assign({}, state), { ship: __assign(__assign({}, state.ship), { modules: __spreadArray([action.item], state.ship.modules) }), currentCard: {
                       type: "INFO",
@@ -787,7 +796,7 @@
               var newEnemy_1 = damage
                   ? __assign(__assign({}, state.currentCard), { health: state.currentCard.health - damage }) : state.currentCard;
               var newShip = repair
-                  ? __assign(__assign({}, state.ship), { health: state.ship.health + repair }) : state.ship;
+                  ? __assign(__assign({}, state.ship), { health: Math.min(state.ship.health + repair, state.ship.maxHealth) }) : state.ship;
               var wonbattle = newEnemy_1.health > 0
                   ? {}
                   : {
@@ -826,6 +835,7 @@
                       : 0;
                   return __assign(__assign({}, enemy), (_a = {}, _a[stat] = state.currentCard[stat] + effect.diff.amount + buff, _a));
               }, state.currentCard);
+              newCurrentCard.health = Math.min(newCurrentCard.health, newCurrentCard.maxHealth);
               var gameover = newShip.health > 0
                   ? {}
                   : {

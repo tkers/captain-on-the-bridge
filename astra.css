@@ -49,6 +49,7 @@ nav {
   animation-name: pulse;
   animation-duration: 8s;
   animation-iteration-count: infinite;
+  transition: background-color 200ms;
 }
 nav.safe {
   background-color: var(--secondy-action);
@@ -128,8 +129,8 @@ section.dicearea {
   transition-timing-function: ease-in-out;
 }
 #ship-health div.bar.on {
-  --glow-color: #81c08b;
-  background-color: #81c08b; /* #88c795;*/
+  --glow-color: #97d184;
+  background-color: #97d184; /* #88c795;*/
   box-shadow: 0 0 4px var(--glow-color);
   animation-name: glow;
   animation-duration: 2s;
@@ -313,6 +314,12 @@ button:hover {
 }
 button:disabled {
   filter: grayscale(0.8);
+}
+#ship-modules button:disabled {
+  background-color: var(--super-light-text);
+}
+#ship-modules button:disabled:hover {
+  box-shadow: none;
 }
 button.snd {
   background-color: var(--secondy-action);

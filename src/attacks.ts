@@ -24,7 +24,7 @@ export const laser = (): Attack => ({
   name: "Standard Laser",
   flavor: "A simple but trustworthy laser cannon",
   cost: { kind: "SHAPE", values: [{ kind: "ALL" }], assigned: [] },
-  damage: { kind: "FIXED", amount: 3 },
+  damage: { kind: "FIXED", amount: 2 },
 });
 
 export const droid = (): Attack => ({
@@ -44,8 +44,8 @@ export const ion = (): Attack => ({
 export const chargedLaser = (): Attack => ({
   name: "Charged Laser",
   flavor: "Heavy duty laser. Needs time to charge, but does a lot of damage.",
-  cost: { kind: "TOTAL", amount: 24, assigned: 0 },
-  damage: { kind: "FIXED", amount: 9 },
+  cost: { kind: "TOTAL", amount: 12, assigned: 0 },
+  damage: { kind: "FIXED", amount: 6 },
 });
 
 export const missle = (): Attack => ({
@@ -54,10 +54,10 @@ export const missle = (): Attack => ({
   cost: {
     kind: "SHAPE",
     values: [
-      { kind: "MIN", amount: 4 },
-      { kind: "MIN", amount: 4 },
+      { kind: "EQL", amount: 6 },
+      { kind: "EQL", amount: 6 },
     ],
     assigned: [],
   },
-  damage: { kind: "FIXED", amount: 6 },
+  damage: { kind: "FIXED", amount: 8 },
 });

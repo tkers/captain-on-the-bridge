@@ -96,8 +96,8 @@ export const spacePirate = (): EncounterCard => ({
   attack: 5,
   defense: 2,
   speed: 5,
-  health: 3,
-  maxHealth: 3,
+  health: 12,
+  maxHealth: 12,
   moves: [
     undefined,
     undefined,
@@ -128,8 +128,8 @@ export const rustyTurret = (): EncounterCard => ({
   attack: 1,
   defense: 4,
   speed: 0,
-  health: 2,
-  maxHealth: 2,
+  health: 5,
+  maxHealth: 5,
   moves: [
     undefined,
     undefined,

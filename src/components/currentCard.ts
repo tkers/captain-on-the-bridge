@@ -3,12 +3,38 @@ import { useDispatch, useState } from "../predux";
 import { intersperse } from "../utils";
 
 const CurrentCard = () => {
-  const { currentCard: card, inBattle, isDead, score } = useState();
+  const { currentCard: card, inBattle, isDead, isWin, score } = useState();
   if (!card && !isDead) return null;
 
   const dispatch = useDispatch();
 
-  if (isDead) {
+  if (isWin) {
+    return h(
+      "div",
+      { class: "card current" },
+      h("strong", null, `🚀 Victory`),
+      h(
+        "p",
+        null,
+        "You explored the entire universe and lived to tell the story! Your adventure lasted ",
+        h("strong", null, score),
+        " days."
+      ),
+      h(
+        "div",
+        { class: "down" },
+        h(
+          "button",
+          {
+            onclick: () => {
+              dispatch({ type: "REPLAY" });
+            },
+          },
+          "New Adventure?"
+        )
+      )
+    );
+  } else if (isDead) {
     return h(
       "div",
       { class: "card current" },
@@ -31,7 +57,7 @@ const CurrentCard = () => {
               dispatch({ type: "REPLAY" });
             },
           },
-          "Replay"
+          "Try Again?"
         )
       )
     );
