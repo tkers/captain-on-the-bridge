@@ -251,7 +251,7 @@
                   dispatch({ type: "TURN_CARD" });
               }
           }
-      }, worldDeck.length);
+      }, worldDeck.length, a$1("div", { "class": "down", style: "line-height: initial; font-size: 60%" }, "Unexplored Space"));
   };
 
   const intersperse = (arr, sep) =>

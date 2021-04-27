@@ -15,7 +15,12 @@ const WorldDeck = () => {
         }
       },
     },
-    worldDeck.length
+    worldDeck.length,
+    h(
+      "div",
+      { class: "down", style: "line-height: initial; font-size: 60%" },
+      "Unexplored Space"
+    )
   );
 };
 
