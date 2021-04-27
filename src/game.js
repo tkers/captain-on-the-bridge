@@ -29,14 +29,12 @@ const View = () => {
   }
 };
 
-const LDFooter = () => {
+const Footer = () => {
   return h(
     "center",
     null,
     h("footer", null, [
       "Captain on the Bridge ",
-      h("strong", null, "•"),
-      " LD48 version ",
       h("strong", null, "•"),
       " ",
       h(
@@ -53,7 +51,7 @@ const Game = () => {
   return [
     h("nav", { class: inBattle ? (myTurn ? "warn" : "alert") : "safe" }),
     h("main", null, h(View, null)),
-    h(LDFooter, null),
+    h(Footer, null),
   ];
 };
 

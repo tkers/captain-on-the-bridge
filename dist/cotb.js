@@ -583,14 +583,12 @@
     }
   };
 
-  const LDFooter = () => {
+  const Footer = () => {
     return a$1(
       "center",
       null,
       a$1("footer", null, [
         "Captain on the Bridge ",
-        a$1("strong", null, "•"),
-        " LD48 version ",
         a$1("strong", null, "•"),
         " ",
         a$1(
@@ -607,7 +605,7 @@
     return [
       a$1("nav", { class: inBattle ? (myTurn ? "warn" : "alert") : "safe" }),
       a$1("main", null, a$1(View, null)),
-      a$1(LDFooter, null),
+      a$1(Footer, null),
     ];
   };
 
