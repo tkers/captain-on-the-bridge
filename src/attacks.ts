@@ -20,6 +20,26 @@ export type Attack = {
   repair?: EffectAmount;
 };
 
+export const clearAssigned = (m: Attack): Attack => {
+  if (m.cost.kind === "TOTAL") {
+    return {
+      ...m,
+      cost: {
+        ...m.cost,
+        assigned: 0,
+      },
+    };
+  } else {
+    return {
+      ...m,
+      cost: {
+        ...m.cost,
+        assigned: [],
+      },
+    };
+  }
+};
+
 export const laser = (): Attack => ({
   name: "Standard Laser",
   flavor: "A simple but trustworthy laser cannon",

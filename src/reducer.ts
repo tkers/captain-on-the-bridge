@@ -1,12 +1,20 @@
 import {
   Deck,
   Card,
+  info,
   rustyTurret,
   spacePirate,
   rustyLaser,
   niftyTechnician,
 } from "./cards";
+import { clearAssigned } from "./attacks";
 import { Spacecraft } from "./ships";
+
+function assert(condition: any, message?: string): asserts condition {
+  if (!condition) {
+    throw new Error(message || "Invalid state");
+  }
+}
 
 type State = {
   ship?: Spacecraft;
@@ -38,7 +46,7 @@ export const getInitialState = (): State => ({
   selectedDice: null,
 });
 
-export const reducer = (state, action) => {
+export const reducer = (state: State, action): State => {
   switch (action.type) {
     case "SELECT_SHIP":
       return { ...state, ship: action.ship };
@@ -143,6 +151,8 @@ export const reducer = (state, action) => {
         },
       };
     case "USE_WEAPON": {
+      assert(state.currentCard.type === "ENCOUNTER");
+
       const mod = state.ship.modules[action.index];
 
       const sumAll = (assigned) =>
@@ -178,11 +188,10 @@ export const reducer = (state, action) => {
           ? {}
           : {
               inBattle: false,
-              currentCard: {
-                type: "INFO",
-                name: "Victory!",
-                flavor: `You defeated the ${state.currentCard.name}`,
-              },
+              currentCard: info(
+                "Victory!",
+                `You defeated the ${state.currentCard.name}`
+              ),
             };
 
       return {
@@ -191,15 +200,7 @@ export const reducer = (state, action) => {
         ship: {
           ...newShip,
           modules: state.ship.modules.map((m, ix) =>
-            ix === action.index || newEnemy.health <= 0
-              ? {
-                  ...m,
-                  cost: {
-                    ...m.cost,
-                    assigned: m.cost.kind === "TOTAL" ? 0 : [],
-                  },
-                }
-              : m
+            ix === action.index || newEnemy.health <= 0 ? clearAssigned(m) : m
           ),
         },
         ...wonbattle,
@@ -213,13 +214,7 @@ export const reducer = (state, action) => {
         selectedDice: null,
         ship: {
           ...state.ship,
-          modules: state.ship.modules.map((m) => ({
-            ...m,
-            cost: {
-              ...m.cost,
-              assigned: m.cost.kind === "TOTAL" ? m.cost.assigned : [],
-            },
-          })),
+          modules: state.ship.modules.map(clearAssigned),
         },
       };
     case "ENEMY_MOVE": {

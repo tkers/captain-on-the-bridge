@@ -17,6 +17,46 @@
   const useState = () => F(Predux)[0];
   const useDispatch = () => F(Predux)[1];
 
+  /*! *****************************************************************************
+  Copyright (c) Microsoft Corporation.
+
+  Permission to use, copy, modify, and/or distribute this software for any
+  purpose with or without fee is hereby granted.
+
+  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+  REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+  AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+  INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+  LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+  OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+  PERFORMANCE OF THIS SOFTWARE.
+  ***************************************************************************** */
+
+  var __assign = function() {
+      __assign = Object.assign || function __assign(t) {
+          for (var s, i = 1, n = arguments.length; i < n; i++) {
+              s = arguments[i];
+              for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          }
+          return t;
+      };
+      return __assign.apply(this, arguments);
+  };
+
+  function __spreadArray(to, from) {
+      for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+          to[j] = from[i];
+      return to;
+  }
+
+  var clearAssigned = function (m) {
+      if (m.cost.kind === "TOTAL") {
+          return __assign(__assign({}, m), { cost: __assign(__assign({}, m.cost), { assigned: 0 }) });
+      }
+      else {
+          return __assign(__assign({}, m), { cost: __assign(__assign({}, m.cost), { assigned: [] }) });
+      }
+  };
   var laser = function () { return ({
       name: "Standard Laser",
       flavor: "A simple but trustworthy laser cannon",
@@ -613,38 +653,11 @@
     ];
   };
 
-  /*! *****************************************************************************
-  Copyright (c) Microsoft Corporation.
-
-  Permission to use, copy, modify, and/or distribute this software for any
-  purpose with or without fee is hereby granted.
-
-  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-  REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
-  AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-  INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
-  LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
-  OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
-  PERFORMANCE OF THIS SOFTWARE.
-  ***************************************************************************** */
-
-  var __assign = function() {
-      __assign = Object.assign || function __assign(t) {
-          for (var s, i = 1, n = arguments.length; i < n; i++) {
-              s = arguments[i];
-              for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-          }
-          return t;
-      };
-      return __assign.apply(this, arguments);
-  };
-
-  function __spreadArray(to, from) {
-      for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-          to[j] = from[i];
-      return to;
-  }
-
+  var info = function (name, flavor) { return ({
+      type: "INFO",
+      name: name,
+      flavor: flavor
+  }); };
   var niftyTechnician = function () { return ({
       type: "EVENT",
       name: "Nifty Technician",
@@ -728,6 +741,11 @@
       ]
   }); };
 
+  function assert(condition, message) {
+      if (!condition) {
+          throw new Error(message || "Invalid state");
+      }
+  }
   var getInitialState = function () { return ({
       ship: null,
       isDead: false,
@@ -799,6 +817,7 @@
                           }
                       }) }) });
           case "USE_WEAPON": {
+              assert(state.currentCard.type === "ENCOUNTER");
               var mod = state.ship.modules[action.index];
               var sumAll = function (assigned) {
                   return assigned instanceof Array
@@ -823,19 +842,14 @@
                   ? {}
                   : {
                       inBattle: false,
-                      currentCard: {
-                          type: "INFO",
-                          name: "Victory!",
-                          flavor: "You defeated the " + state.currentCard.name
-                      }
+                      currentCard: info("Victory!", "You defeated the " + state.currentCard.name)
                   };
               return __assign(__assign(__assign({}, state), { currentCard: newEnemy_1, ship: __assign(__assign({}, newShip), { modules: state.ship.modules.map(function (m, ix) {
-                          return ix === action.index || newEnemy_1.health <= 0
-                              ? __assign(__assign({}, m), { cost: __assign(__assign({}, m.cost), { assigned: m.cost.kind === "TOTAL" ? 0 : [] }) }) : m;
+                          return ix === action.index || newEnemy_1.health <= 0 ? clearAssigned(m) : m;
                       }) }) }), wonbattle);
           }
           case "END_TURN":
-              return __assign(__assign({}, state), { myTurn: false, dice: [], selectedDice: null, ship: __assign(__assign({}, state.ship), { modules: state.ship.modules.map(function (m) { return (__assign(__assign({}, m), { cost: __assign(__assign({}, m.cost), { assigned: m.cost.kind === "TOTAL" ? m.cost.assigned : [] }) })); }) }) });
+              return __assign(__assign({}, state), { myTurn: false, dice: [], selectedDice: null, ship: __assign(__assign({}, state.ship), { modules: state.ship.modules.map(clearAssigned) }) });
           case "ENEMY_MOVE": {
               var newShip = action.move.effect
                   .filter(function (e) { return !e.self; })

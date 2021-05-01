@@ -1,4 +1,4 @@
-import { Attack } from "./attacks";
+import { Attack, laser } from "./attacks";
 
 type Stat = "ATTACK" | "DEFENSE" | "SPEED" | "HEALTH";
 export type MoveEffect = {
@@ -61,7 +61,11 @@ type InfoCard = {
 export type Card = InfoCard | EncounterCard | ItemCard | EventCard;
 export type Deck = Card[];
 
-import { laser } from "./attacks";
+export const info = (name: string, flavor: string): InfoCard => ({
+  type: "INFO",
+  name,
+  flavor,
+});
 
 export const niftyTechnician = (): EventCard => ({
   type: "EVENT",
