@@ -1,6 +1,8 @@
+import { Action } from "./actions";
 import {
   Deck,
   Card,
+  DiceValue,
   info,
   rustyTurret,
   spacePirate,
@@ -27,7 +29,7 @@ type State = {
   myTurn: boolean;
   canRoll: boolean;
   maxDice: number;
-  dice: Array<1 | 2 | 3 | 4 | 5 | 6>;
+  dice: DiceValue[];
   selectedDice?: number;
 };
 
@@ -46,7 +48,7 @@ export const getInitialState = (): State => ({
   selectedDice: null,
 });
 
-export const reducer = (state: State, action): State => {
+export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case "SELECT_SHIP":
       return { ...state, ship: action.ship };
@@ -218,6 +220,8 @@ export const reducer = (state: State, action): State => {
         },
       };
     case "ENEMY_MOVE": {
+      assert(state.currentCard.type === "ENCOUNTER");
+
       const newShip = action.move.effect
         .filter((e) => !e.self)
         .reduce((ship, effect) => {
@@ -269,6 +273,7 @@ export const reducer = (state: State, action): State => {
     case "REPLAY":
       return getInitialState();
     default:
+      // @ts-ignore
       throw new Error(`Unexpected action type ${action.type}`);
   }
 };

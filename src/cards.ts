@@ -1,5 +1,7 @@
 import { Attack, laser } from "./attacks";
 
+export type DiceValue = 1 | 2 | 3 | 4 | 5 | 6;
+
 type Stat = "ATTACK" | "DEFENSE" | "SPEED" | "HEALTH";
 export type MoveEffect = {
   self: boolean;
@@ -7,13 +9,13 @@ export type MoveEffect = {
   diff: { amount?: number; stat?: Stat };
 };
 
-type Move = {
+export type Move = {
   name: string;
   flavor: string;
   effect: MoveEffect[];
 };
 
-type EncounterCard = {
+export type EncounterCard = {
   type: "ENCOUNTER";
   name: string;
   flavor: string;
@@ -39,7 +41,7 @@ type ItemCard = {
   item: Attack;
 };
 
-type Choice = {
+export type Choice = {
   name: string;
   flavor: string;
   effect: MoveEffect[];

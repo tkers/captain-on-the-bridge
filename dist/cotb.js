@@ -851,6 +851,7 @@
           case "END_TURN":
               return __assign(__assign({}, state), { myTurn: false, dice: [], selectedDice: null, ship: __assign(__assign({}, state.ship), { modules: state.ship.modules.map(clearAssigned) }) });
           case "ENEMY_MOVE": {
+              assert(state.currentCard.type === "ENCOUNTER");
               var newShip = action.move.effect
                   .filter(function (e) { return !e.self; })
                   .reduce(function (ship, effect) {
@@ -883,6 +884,7 @@
           case "REPLAY":
               return getInitialState();
           default:
+              // @ts-ignore
               throw new Error("Unexpected action type " + action.type);
       }
   };
