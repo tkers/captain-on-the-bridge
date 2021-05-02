@@ -90,7 +90,7 @@ const DiceSection: FunctionComponent = ({}) => {
       "button",
       {
         class: "snd",
-        onclick: () => dispatch({ type: "END_TURN", dice: rollDice(maxDice) }),
+        onclick: () => dispatch({ type: "END_TURN" }),
       },
       "End Turn"
     )

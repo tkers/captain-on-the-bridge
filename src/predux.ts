@@ -1,14 +1,13 @@
 import { h, createContext, FunctionComponent } from "preact";
 import { useReducer, useContext } from "preact/hooks";
 
-const Predux = createContext([null, null]);
+import { State, getInitialState, reducer } from "./reducer";
+import { Dispatch } from "./actions";
 
-export const PreduxProvider: FunctionComponent<any> = ({
-  initialState,
-  reducer,
-  children,
-}) => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+const Predux = createContext<[State, Dispatch]>([null, null]);
+
+export const PreduxProvider: FunctionComponent<any> = ({ children }) => {
+  const [state, dispatch] = useReducer(reducer, getInitialState());
   return h(Predux.Provider, { value: [state, dispatch], children });
 };
 

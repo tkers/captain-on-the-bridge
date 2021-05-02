@@ -7,15 +7,6 @@
 
     var t,u,r,o=0,i=[],c=n.__b,f=n.__r,e=n.diffed,a=n.__c,v=n.unmount;function m(t,r){n.__h&&n.__h(u,t,o||r),o=0;var i=u.__H||(u.__H={__:[],__h:[]});return t>=i.__.length&&i.__.push({}),i.__[t]}function l(n){return o=1,p(w,n)}function p(n,r,o){var i=m(t++,2);return i.t=n,i.__c||(i.__=[o?o(r):w(void 0,r),function(n){var t=i.t(i.__[0],n);i.__[0]!==t&&(i.__=[t,i.__[1]],i.__c.setState({}));}],i.__c=u),i.__}function F(n){var r=u.context[n.__c],o=m(t++,9);return o.__c=n,r?(null==o.__&&(o.__=!0,r.sub(u)),r.props.value):n.__}function x(){i.forEach(function(t){if(t.__P)try{t.__H.__h.forEach(g),t.__H.__h.forEach(j),t.__H.__h=[];}catch(u){t.__H.__h=[],n.__e(u,t.__v);}}),i=[];}n.__b=function(n){u=null,c&&c(n);},n.__r=function(n){f&&f(n),t=0;var r=(u=n.__c).__H;r&&(r.__h.forEach(g),r.__h.forEach(j),r.__h=[]);},n.diffed=function(t){e&&e(t);var o=t.__c;o&&o.__H&&o.__H.__h.length&&(1!==i.push(o)&&r===n.requestAnimationFrame||((r=n.requestAnimationFrame)||function(n){var t,u=function(){clearTimeout(r),b&&cancelAnimationFrame(t),setTimeout(n);},r=setTimeout(u,100);b&&(t=requestAnimationFrame(u));})(x)),u=void 0;},n.__c=function(t,u){u.some(function(t){try{t.__h.forEach(g),t.__h=t.__h.filter(function(n){return !n.__||j(n)});}catch(r){u.some(function(n){n.__h&&(n.__h=[]);}),u=[],n.__e(r,t.__v);}}),a&&a(t,u);},n.unmount=function(t){v&&v(t);var u=t.__c;if(u&&u.__H)try{u.__H.__.forEach(g);}catch(t){n.__e(t,u.__v);}};var b="function"==typeof requestAnimationFrame;function g(n){var t=u;"function"==typeof n.__c&&n.__c(),u=t;}function j(n){var t=u;n.__c=n.__(),u=t;}function w(n,t){return "function"==typeof t?t(n):t}
 
-    var Predux = q([null, null]);
-    var PreduxProvider = function (_a) {
-        var initialState = _a.initialState, reducer = _a.reducer, children = _a.children;
-        var _b = p(reducer, initialState), state = _b[0], dispatch = _b[1];
-        return a$1(Predux.Provider, { value: [state, dispatch], children: children });
-    };
-    var useState = function () { return F(Predux)[0]; };
-    var useDispatch = function () { return F(Predux)[1]; };
-
     /*! *****************************************************************************
     Copyright (c) Microsoft Corporation.
 
@@ -93,6 +84,251 @@
         },
         damage: { kind: "FIXED", amount: 8 }
     }); };
+
+    var info = function (name, flavor) { return ({
+        type: "INFO",
+        name: name,
+        flavor: flavor
+    }); };
+    var niftyTechnician = function () { return ({
+        type: "EVENT",
+        name: "Nifty Technician",
+        flavor: "Your Head Technician offers to redirect some of the shield enery to your hyperdrive.",
+        options: [
+            {
+                name: "Hell yes!",
+                flavor: "The technician lowers the shields in favor of the hyperdrive",
+                effect: [
+                    { self: true, stat: "SPEED", diff: { amount: 4 } },
+                    { self: true, stat: "DEFENSE", diff: { amount: -2 } },
+                ]
+            },
+            { name: "Too risky", flavor: "You keep your shields intact.", effect: [] },
+        ]
+    }); };
+    var rustyLaser = function () { return ({
+        type: "ITEM",
+        name: "Rusty Laser",
+        flavor: "You find a rusty laser cannon, it still appears to be functional",
+        item: laser()
+    }); };
+    var spacePirate = function () { return ({
+        type: "ENCOUNTER",
+        name: "Space Pirates",
+        flavor: "Out of nowhere, a small vessel approaches. It's clearly not friendly.",
+        attack: 5,
+        defense: 2,
+        speed: 5,
+        health: 12,
+        maxHealth: 12,
+        moves: [
+            undefined,
+            undefined,
+            {
+                name: "Close call",
+                flavor: "A laser shot just barely misses your ship",
+                effect: []
+            },
+            undefined,
+            {
+                name: "Laser",
+                flavor: "Your ship is hit by a laser barrage",
+                effect: [{ self: false, stat: "HEALTH", diff: { amount: -2 } }]
+            },
+            {
+                name: "Critical hit",
+                flavor: "A laser hits your ship's warp drives",
+                effect: [{ self: false, stat: "HEALTH", diff: { amount: -4 } }]
+            },
+        ]
+    }); };
+    var rustyTurret = function () { return ({
+        type: "ENCOUNTER",
+        name: "Rusty Turret",
+        flavor: "You approach a rusty turret. It does not look like much of a threat.",
+        attack: 1,
+        defense: 4,
+        speed: 0,
+        health: 5,
+        maxHealth: 5,
+        moves: [
+            undefined,
+            undefined,
+            {
+                name: "Whirr",
+                flavor: "The turret whirrs, but does not manage to do anything else",
+                effect: []
+            },
+            undefined,
+            {
+                name: "Repair hull",
+                flavor: "The turret manages to restore its hull",
+                effect: [{ self: true, stat: "HEALTH", diff: { amount: 2 } }]
+            },
+            {
+                name: "Laser",
+                flavor: "Your ship is hit by light laser",
+                effect: [{ self: false, stat: "HEALTH", diff: { amount: -1 } }]
+            },
+        ]
+    }); };
+
+    function assert(condition, message) {
+        if (!condition) {
+            throw new Error(message || "Invalid state");
+        }
+    }
+    var getInitialState = function () { return ({
+        ship: null,
+        isDead: false,
+        isWin: false,
+        score: 0,
+        worldDeck: [rustyLaser(), rustyTurret(), niftyTechnician(), spacePirate()],
+        currentCard: null,
+        inBattle: false,
+        myTurn: true,
+        canRoll: false,
+        maxDice: 3,
+        dice: [],
+        selectedDice: null
+    }); };
+    var reducer = function (state, action) {
+        switch (action.type) {
+            case "SELECT_SHIP":
+                return __assign(__assign({}, state), { ship: action.ship });
+            case "TURN_CARD":
+                return state.worldDeck.length > 0
+                    ? __assign(__assign({}, state), { score: state.currentCard ? state.score + 1 : state.score, currentCard: state.worldDeck[0], worldDeck: state.worldDeck.slice(1) }) : __assign(__assign({}, state), { isWin: true, score: state.score + 1 });
+            case "INSTALL_ITEM":
+                return __assign(__assign({}, state), { ship: __assign(__assign({}, state.ship), { modules: __spreadArray([action.item], state.ship.modules) }), currentCard: {
+                        type: "INFO",
+                        name: "Ship upgraded",
+                        flavor: "You installed the " + action.item.name + "."
+                    } });
+            case "MAKE_CHOICE": {
+                var newShip = action.choice.effect.reduce(function (ship, effect) {
+                    var _a;
+                    var stat = effect.stat.toLowerCase();
+                    var buff = effect.diff.stat
+                        ? state.ship[effect.diff.stat.toLowerCase()]
+                        : 0;
+                    return __assign(__assign({}, ship), (_a = {}, _a[stat] = state.ship[stat] + effect.diff.amount + buff, _a));
+                }, state.ship);
+                return __assign(__assign({}, state), { ship: newShip, currentCard: {
+                        type: "INFO",
+                        name: state.currentCard.name,
+                        flavor: action.choice.flavor
+                    } });
+            }
+            case "ATTEMPT_ESCAPE":
+                return __assign(__assign({}, state), { ship: __assign(__assign({}, state.ship), { health: state.ship.health - 1 }), currentCard: {
+                        type: "INFO",
+                        name: "Narrow escape",
+                        flavor: "You managed to get away from the " + action.enemy.name + ", but not before they managed to hit you with a laser beam."
+                    } });
+            case "BATTLE_STATIONS":
+                return __assign(__assign({}, state), { inBattle: true, dice: [], canRoll: true, myTurn: true });
+            case "ROLL_DICE":
+                return __assign(__assign({}, state), { dice: action.dice, canRoll: false, selectedDice: null });
+            case "SELECT_DICE":
+                return __assign(__assign({}, state), { selectedDice: action.index });
+            case "ASSIGN_DICE":
+                return __assign(__assign({}, state), { dice: state.dice.filter(function (d, ix) { return ix !== state.selectedDice; }), selectedDice: null, ship: __assign(__assign({}, state.ship), { modules: state.ship.modules.map(function (m, ix) {
+                            if (ix === action.moduleIndex) {
+                                if (m.cost.kind === "TOTAL") {
+                                    return __assign(__assign({}, m), { cost: __assign(__assign({}, m.cost), { assigned: m.cost.assigned + state.dice[state.selectedDice] }) });
+                                }
+                                else {
+                                    var newAssigned = m.cost.assigned;
+                                    newAssigned[action.diceIndex] = state.dice[state.selectedDice];
+                                    return __assign(__assign({}, m), { cost: __assign(__assign({}, m.cost), { assigned: newAssigned }) });
+                                }
+                            }
+                            else {
+                                return m;
+                            }
+                        }) }) });
+            case "USE_WEAPON": {
+                assert(state.currentCard.type === "ENCOUNTER");
+                var mod = state.ship.modules[action.index];
+                var sumAll = function (assigned) {
+                    return assigned instanceof Array
+                        ? assigned.reduce(function (a, x) { return a + x; }, 0)
+                        : assigned;
+                };
+                var damage = mod.damage
+                    ? mod.damage.kind === "FIXED"
+                        ? mod.damage.amount
+                        : sumAll(mod.cost.assigned)
+                    : 0;
+                var repair = mod.repair
+                    ? mod.repair.kind === "FIXED"
+                        ? mod.repair.amount
+                        : sumAll(mod.cost.assigned)
+                    : 0;
+                var newEnemy_1 = damage
+                    ? __assign(__assign({}, state.currentCard), { health: state.currentCard.health - damage }) : state.currentCard;
+                var newShip = repair
+                    ? __assign(__assign({}, state.ship), { health: Math.min(state.ship.health + repair, state.ship.maxHealth) }) : state.ship;
+                var wonbattle = newEnemy_1.health > 0
+                    ? {}
+                    : {
+                        inBattle: false,
+                        currentCard: info("Victory!", "You defeated the " + state.currentCard.name)
+                    };
+                return __assign(__assign(__assign({}, state), { currentCard: newEnemy_1, ship: __assign(__assign({}, newShip), { modules: state.ship.modules.map(function (m, ix) {
+                            return ix === action.index || newEnemy_1.health <= 0 ? clearAssigned(m) : m;
+                        }) }) }), wonbattle);
+            }
+            case "END_TURN":
+                return __assign(__assign({}, state), { myTurn: false, dice: [], selectedDice: null, ship: __assign(__assign({}, state.ship), { modules: state.ship.modules.map(clearAssigned) }) });
+            case "ENEMY_MOVE": {
+                assert(state.currentCard.type === "ENCOUNTER");
+                var newShip = action.move.effect
+                    .filter(function (e) { return !e.self; })
+                    .reduce(function (ship, effect) {
+                    var _a;
+                    var stat = effect.stat.toLowerCase();
+                    var buff = effect.diff.stat
+                        ? state.currentCard[effect.diff.stat.toLowerCase()]
+                        : 0;
+                    return __assign(__assign({}, ship), (_a = {}, _a[stat] = state.ship[stat] + effect.diff.amount + buff, _a));
+                }, state.ship);
+                var newCurrentCard = action.move.effect
+                    .filter(function (e) { return e.self; })
+                    .reduce(function (enemy, effect) {
+                    var _a;
+                    var stat = effect.stat.toLowerCase();
+                    var buff = effect.diff.stat
+                        ? state.currentCard[effect.diff.stat.toLowerCase()]
+                        : 0;
+                    return __assign(__assign({}, enemy), (_a = {}, _a[stat] = state.currentCard[stat] + effect.diff.amount + buff, _a));
+                }, state.currentCard);
+                newCurrentCard.health = Math.min(newCurrentCard.health, newCurrentCard.maxHealth);
+                var gameover = newShip.health > 0
+                    ? {}
+                    : {
+                        isDead: true,
+                        inBattle: false
+                    };
+                return __assign(__assign(__assign({}, state), { ship: newShip, currentCard: newCurrentCard, myTurn: true, canRoll: true }), gameover);
+            }
+            case "REPLAY":
+                return getInitialState();
+            default:
+                // @ts-ignore
+                throw new Error("Unexpected action type " + action.type);
+        }
+    };
+
+    var Predux = q([null, null]);
+    var PreduxProvider = function (_a) {
+        var children = _a.children;
+        var _b = p(reducer, getInitialState()), state = _b[0], dispatch = _b[1];
+        return a$1(Predux.Provider, { value: [state, dispatch], children: children });
+    };
+    var useState = function () { return F(Predux)[0]; };
+    var useDispatch = function () { return F(Predux)[1]; };
 
     var fighter = function () { return ({
         name: "Fighter",
@@ -338,7 +574,7 @@
                     ]),
                     a$1("button", {
                         onclick: function () {
-                            dispatch({ type: "BATTLE_STATIONS", enemy: card });
+                            dispatch({ type: "BATTLE_STATIONS" });
                         }
                     }, "Battle stations!"),
                     a$1("button", {
@@ -495,7 +731,7 @@
         }, "Roll Dice"));
         var endButton = a$1("div", { "class": "down" }, a$1("button", {
             "class": "snd",
-            onclick: function () { return dispatch({ type: "END_TURN", dice: rollDice$1(maxDice) }); }
+            onclick: function () { return dispatch({ type: "END_TURN" }); }
         }, "End Turn"));
         var selectDice = function (ix) { return dispatch({ type: "SELECT_DICE", index: ix }); };
         var displayedDice = isRolling ? animatingDice : dice;
@@ -642,246 +878,9 @@
         ]);
     };
 
-    var info = function (name, flavor) { return ({
-        type: "INFO",
-        name: name,
-        flavor: flavor
-    }); };
-    var niftyTechnician = function () { return ({
-        type: "EVENT",
-        name: "Nifty Technician",
-        flavor: "Your Head Technician offers to redirect some of the shield enery to your hyperdrive.",
-        options: [
-            {
-                name: "Hell yes!",
-                flavor: "The technician lowers the shields in favor of the hyperdrive",
-                effect: [
-                    { self: true, stat: "SPEED", diff: { amount: 4 } },
-                    { self: true, stat: "DEFENSE", diff: { amount: -2 } },
-                ]
-            },
-            { name: "Too risky", flavor: "You keep your shields intact.", effect: [] },
-        ]
-    }); };
-    var rustyLaser = function () { return ({
-        type: "ITEM",
-        name: "Rusty Laser",
-        flavor: "You find a rusty laser cannon, it still appears to be functional",
-        item: laser()
-    }); };
-    var spacePirate = function () { return ({
-        type: "ENCOUNTER",
-        name: "Space Pirates",
-        flavor: "Out of nowhere, a small vessel approaches. It's clearly not friendly.",
-        attack: 5,
-        defense: 2,
-        speed: 5,
-        health: 12,
-        maxHealth: 12,
-        moves: [
-            undefined,
-            undefined,
-            {
-                name: "Close call",
-                flavor: "A laser shot just barely misses your ship",
-                effect: []
-            },
-            undefined,
-            {
-                name: "Laser",
-                flavor: "Your ship is hit by a laser barrage",
-                effect: [{ self: false, stat: "HEALTH", diff: { amount: -2 } }]
-            },
-            {
-                name: "Critical hit",
-                flavor: "A laser hits your ship's warp drives",
-                effect: [{ self: false, stat: "HEALTH", diff: { amount: -4 } }]
-            },
-        ]
-    }); };
-    var rustyTurret = function () { return ({
-        type: "ENCOUNTER",
-        name: "Rusty Turret",
-        flavor: "You approach a rusty turret. It does not look like much of a threat.",
-        attack: 1,
-        defense: 4,
-        speed: 0,
-        health: 5,
-        maxHealth: 5,
-        moves: [
-            undefined,
-            undefined,
-            {
-                name: "Whirr",
-                flavor: "The turret whirrs, but does not manage to do anything else",
-                effect: []
-            },
-            undefined,
-            {
-                name: "Repair hull",
-                flavor: "The turret manages to restore its hull",
-                effect: [{ self: true, stat: "HEALTH", diff: { amount: 2 } }]
-            },
-            {
-                name: "Laser",
-                flavor: "Your ship is hit by light laser",
-                effect: [{ self: false, stat: "HEALTH", diff: { amount: -1 } }]
-            },
-        ]
-    }); };
-
-    function assert(condition, message) {
-        if (!condition) {
-            throw new Error(message || "Invalid state");
-        }
-    }
-    var getInitialState = function () { return ({
-        ship: null,
-        isDead: false,
-        isWin: false,
-        score: 0,
-        worldDeck: [rustyLaser(), rustyTurret(), niftyTechnician(), spacePirate()],
-        currentCard: null,
-        inBattle: false,
-        myTurn: true,
-        canRoll: false,
-        maxDice: 3,
-        dice: [],
-        selectedDice: null
-    }); };
-    var reducer = function (state, action) {
-        switch (action.type) {
-            case "SELECT_SHIP":
-                return __assign(__assign({}, state), { ship: action.ship });
-            case "TURN_CARD":
-                return state.worldDeck.length > 0
-                    ? __assign(__assign({}, state), { score: state.currentCard ? state.score + 1 : state.score, currentCard: state.worldDeck[0], worldDeck: state.worldDeck.slice(1) }) : __assign(__assign({}, state), { isWin: true, score: state.score + 1 });
-            case "INSTALL_ITEM":
-                return __assign(__assign({}, state), { ship: __assign(__assign({}, state.ship), { modules: __spreadArray([action.item], state.ship.modules) }), currentCard: {
-                        type: "INFO",
-                        name: "Ship upgraded",
-                        flavor: "You installed the " + action.item.name + "."
-                    } });
-            case "MAKE_CHOICE": {
-                var newShip = action.choice.effect.reduce(function (ship, effect) {
-                    var _a;
-                    var stat = effect.stat.toLowerCase();
-                    var buff = effect.diff.stat
-                        ? state.ship[effect.diff.stat.toLowerCase()]
-                        : 0;
-                    return __assign(__assign({}, ship), (_a = {}, _a[stat] = state.ship[stat] + effect.diff.amount + buff, _a));
-                }, state.ship);
-                return __assign(__assign({}, state), { ship: newShip, currentCard: {
-                        type: "INFO",
-                        name: state.currentCard.name,
-                        flavor: action.choice.flavor
-                    } });
-            }
-            case "ATTEMPT_ESCAPE":
-                return __assign(__assign({}, state), { ship: __assign(__assign({}, state.ship), { health: state.ship.health - 1 }), currentCard: {
-                        type: "INFO",
-                        name: "Narrow escape",
-                        flavor: "You managed to get away from the " + action.enemy.name + ", but not before they managed to hit you with a laser beam."
-                    } });
-            case "BATTLE_STATIONS":
-                return __assign(__assign({}, state), { inBattle: true, dice: [], canRoll: true, myTurn: true });
-            case "ROLL_DICE":
-                return __assign(__assign({}, state), { dice: action.dice, canRoll: false, selectedDice: null });
-            case "SELECT_DICE":
-                return __assign(__assign({}, state), { selectedDice: action.index });
-            case "ASSIGN_DICE":
-                return __assign(__assign({}, state), { dice: state.dice.filter(function (d, ix) { return ix !== state.selectedDice; }), selectedDice: null, ship: __assign(__assign({}, state.ship), { modules: state.ship.modules.map(function (m, ix) {
-                            if (ix === action.moduleIndex) {
-                                if (m.cost.kind === "TOTAL") {
-                                    return __assign(__assign({}, m), { cost: __assign(__assign({}, m.cost), { assigned: m.cost.assigned + state.dice[state.selectedDice] }) });
-                                }
-                                else {
-                                    var newAssigned = m.cost.assigned;
-                                    newAssigned[action.diceIndex] = state.dice[state.selectedDice];
-                                    return __assign(__assign({}, m), { cost: __assign(__assign({}, m.cost), { assigned: newAssigned }) });
-                                }
-                            }
-                            else {
-                                return m;
-                            }
-                        }) }) });
-            case "USE_WEAPON": {
-                assert(state.currentCard.type === "ENCOUNTER");
-                var mod = state.ship.modules[action.index];
-                var sumAll = function (assigned) {
-                    return assigned instanceof Array
-                        ? assigned.reduce(function (a, x) { return a + x; }, 0)
-                        : assigned;
-                };
-                var damage = mod.damage
-                    ? mod.damage.kind === "FIXED"
-                        ? mod.damage.amount
-                        : sumAll(mod.cost.assigned)
-                    : 0;
-                var repair = mod.repair
-                    ? mod.repair.kind === "FIXED"
-                        ? mod.repair.amount
-                        : sumAll(mod.cost.assigned)
-                    : 0;
-                var newEnemy_1 = damage
-                    ? __assign(__assign({}, state.currentCard), { health: state.currentCard.health - damage }) : state.currentCard;
-                var newShip = repair
-                    ? __assign(__assign({}, state.ship), { health: Math.min(state.ship.health + repair, state.ship.maxHealth) }) : state.ship;
-                var wonbattle = newEnemy_1.health > 0
-                    ? {}
-                    : {
-                        inBattle: false,
-                        currentCard: info("Victory!", "You defeated the " + state.currentCard.name)
-                    };
-                return __assign(__assign(__assign({}, state), { currentCard: newEnemy_1, ship: __assign(__assign({}, newShip), { modules: state.ship.modules.map(function (m, ix) {
-                            return ix === action.index || newEnemy_1.health <= 0 ? clearAssigned(m) : m;
-                        }) }) }), wonbattle);
-            }
-            case "END_TURN":
-                return __assign(__assign({}, state), { myTurn: false, dice: [], selectedDice: null, ship: __assign(__assign({}, state.ship), { modules: state.ship.modules.map(clearAssigned) }) });
-            case "ENEMY_MOVE": {
-                assert(state.currentCard.type === "ENCOUNTER");
-                var newShip = action.move.effect
-                    .filter(function (e) { return !e.self; })
-                    .reduce(function (ship, effect) {
-                    var _a;
-                    var stat = effect.stat.toLowerCase();
-                    var buff = effect.diff.stat
-                        ? state.currentCard[effect.diff.stat.toLowerCase()]
-                        : 0;
-                    return __assign(__assign({}, ship), (_a = {}, _a[stat] = state.ship[stat] + effect.diff.amount + buff, _a));
-                }, state.ship);
-                var newCurrentCard = action.move.effect
-                    .filter(function (e) { return e.self; })
-                    .reduce(function (enemy, effect) {
-                    var _a;
-                    var stat = effect.stat.toLowerCase();
-                    var buff = effect.diff.stat
-                        ? state.currentCard[effect.diff.stat.toLowerCase()]
-                        : 0;
-                    return __assign(__assign({}, enemy), (_a = {}, _a[stat] = state.currentCard[stat] + effect.diff.amount + buff, _a));
-                }, state.currentCard);
-                newCurrentCard.health = Math.min(newCurrentCard.health, newCurrentCard.maxHealth);
-                var gameover = newShip.health > 0
-                    ? {}
-                    : {
-                        isDead: true,
-                        inBattle: false
-                    };
-                return __assign(__assign(__assign({}, state), { ship: newShip, currentCard: newCurrentCard, myTurn: true, canRoll: true }), gameover);
-            }
-            case "REPLAY":
-                return getInitialState();
-            default:
-                // @ts-ignore
-                throw new Error("Unexpected action type " + action.type);
-        }
-    };
-
     window.addEventListener("load", function () {
         var root = document.getElementById("root");
-        var initialState = getInitialState();
-        N(a$1(PreduxProvider, { initialState: initialState, reducer: reducer }, a$1(Game, null)), root);
+        N(a$1(PreduxProvider, null, a$1(Game, null)), root);
     });
 
 })));

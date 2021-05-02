@@ -18,7 +18,7 @@ function assert(condition: any, message?: string): asserts condition {
   }
 }
 
-type State = {
+export type State = {
   ship?: Spacecraft;
   isDead: boolean;
   isWin: boolean;

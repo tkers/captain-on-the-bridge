@@ -34,3 +34,5 @@ export type Action =
   | EndTurnAction
   | EnemyMoveAction
   | ReplayAction;
+
+export type Dispatch = (action: Action) => void;

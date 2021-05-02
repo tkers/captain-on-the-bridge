@@ -108,7 +108,7 @@ const CurrentCard: FunctionComponent = () => {
             "button",
             {
               onclick: () => {
-                dispatch({ type: "BATTLE_STATIONS", enemy: card });
+                dispatch({ type: "BATTLE_STATIONS" });
               },
             },
             "Battle stations!"
