@@ -1,4 +1,4 @@
-import { h } from "preact";
+import { h, FunctionComponent } from "preact";
 import { useState } from "preact/hooks";
 import { useState as usePreduxState, useDispatch } from "../predux";
 
@@ -13,7 +13,7 @@ const offsetDice = () => {
   return { x, y, r };
 };
 
-const Dice = ({ value, offset }) => {
+const Dice: FunctionComponent<any> = ({ value, offset }) => {
   return h(
     "div",
     {
@@ -37,7 +37,7 @@ const getMove = (enemy, dice) => {
   }
 };
 
-const EnemyDiceSection = ({}) => {
+const EnemyDiceSection: FunctionComponent = ({}) => {
   const dispatch = useDispatch();
 
   const { currentCard } = usePreduxState();

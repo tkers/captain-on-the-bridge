@@ -1,4 +1,4 @@
-import { h } from "preact";
+import { h, FunctionComponent } from "preact";
 import { useDispatch } from "../predux";
 import ModuleCost from "./moduleCost";
 
@@ -17,7 +17,7 @@ const getEffect = (module) => {
   return h("p", null, ["[", h("strong", null, [amount, " ", attr]), "]"]);
 };
 
-const ModuleCard = ({ module, index }) => {
+const ModuleCard: FunctionComponent<any> = ({ module, index }) => {
   const dispatch = useDispatch();
   return h("div", { class: "card" }, [
     h("strong", null, module.name),

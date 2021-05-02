@@ -1,7 +1,7 @@
-import { h } from "preact";
+import { h, FunctionComponent } from "preact";
 import { useState, useDispatch } from "../predux";
 
-const DiceCost = ({ dice, onclick, current }) => {
+const DiceCost: FunctionComponent<any> = ({ dice, onclick, current }) => {
   if (current) {
     return h("div", { class: "dice placed" }, current);
   }
@@ -38,7 +38,7 @@ const fits = (dice, req) => {
   }
 };
 
-const ModuleCost = ({ module, index }) => {
+const ModuleCost: FunctionComponent<any> = ({ module, index }) => {
   const { dice, selectedDice } = useState();
   const dispatch = useDispatch();
 

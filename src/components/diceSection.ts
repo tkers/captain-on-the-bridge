@@ -1,4 +1,4 @@
-import { h } from "preact";
+import { h, FunctionComponent } from "preact";
 import { useState } from "preact/hooks";
 import { useState as usePreduxState, useDispatch } from "../predux";
 
@@ -22,7 +22,12 @@ const offsetDice = (num) => {
   return dice;
 };
 
-const Dice = ({ value, onclick, isSelected, offset }) => {
+const Dice: FunctionComponent<any> = ({
+  value,
+  onclick,
+  isSelected,
+  offset,
+}) => {
   return h(
     "div",
     {
@@ -39,7 +44,7 @@ const Dice = ({ value, onclick, isSelected, offset }) => {
 const ROLL_TIME = 1600;
 const ROLL_SPEED = 200;
 
-const DiceSection = ({}) => {
+const DiceSection: FunctionComponent = ({}) => {
   const { canRoll, maxDice, dice, selectedDice } = usePreduxState();
   const dispatch = useDispatch();
 

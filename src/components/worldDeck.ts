@@ -1,7 +1,7 @@
-import { h } from "preact";
+import { h, FunctionComponent } from "preact";
 import { useState, useDispatch } from "../predux";
 
-const WorldDeck = () => {
+const WorldDeck: FunctionComponent = () => {
   const { worldDeck, currentCard } = useState();
   const dispatch = useDispatch();
 

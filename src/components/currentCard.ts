@@ -1,8 +1,8 @@
-import { h } from "preact";
+import { h, FunctionComponent } from "preact";
 import { useDispatch, useState } from "../predux";
 import { intersperse } from "../utils";
 
-const CurrentCard = () => {
+const CurrentCard: FunctionComponent = () => {
   const { currentCard: card, inBattle, isDead, isWin, score } = useState();
   if (!card && !isDead) return null;
 

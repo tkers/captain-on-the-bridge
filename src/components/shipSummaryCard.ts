@@ -1,8 +1,8 @@
-import { h } from "preact";
+import { h, Fragment, FunctionComponent } from "preact";
 import ModuleCard from "./ModuleCard";
 import { useState } from "../predux";
 
-const ShipSummaryCard = ({ ship }) => {
+const ShipSummaryCard: FunctionComponent<any> = ({ ship }) => {
   const hpbar = [];
   for (let i = 0; i < ship.maxHealth; i++) {
     hpbar.push(
@@ -17,7 +17,7 @@ const ShipSummaryCard = ({ ship }) => {
     );
   }
 
-  return [
+  return h(Fragment, null, [
     h("h2", null, ["Spacecraft: ", h("strong", null, ship.name)]),
     h("div", { id: "ship-health" }, hpbar),
     h(
@@ -25,8 +25,7 @@ const ShipSummaryCard = ({ ship }) => {
       { class: "ship-modules row" },
       ship.modules.map((m, ix) => h(ModuleCard, { module: m, index: ix }))
     ),
-  ];
-  // ]);
+  ]);
 };
 
 export default ShipSummaryCard;

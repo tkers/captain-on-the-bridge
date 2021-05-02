@@ -1,7 +1,7 @@
-import { h } from "preact";
+import { h, FunctionComponent } from "preact";
 import { useDispatch } from "../predux";
 
-const ShipSelectCard = ({ ship }) => {
+const ShipSelectCard: FunctionComponent<any> = ({ ship }) => {
   const dispatch = useDispatch();
   const onLaunch = () => dispatch({ type: "SELECT_SHIP", ship });
 
