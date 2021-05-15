@@ -1,14 +1,14 @@
 import { h, Fragment, FunctionComponent } from "preact";
 
-import { useState, useDispatch } from "./predux";
-import { fighter, intercepter, cruiser } from "./ships";
+import { useState, useDispatch } from "../predux";
+import { fighter, intercepter, cruiser } from "../ships";
 
-import ShipSelectCard from "./components/shipSelectCard";
-import ShipSummaryCard from "./components/shipSummaryCard";
-import WorldDeck from "./components/worldDeck";
-import CurrentCard from "./components/currentCard";
-import DiceSection from "./components/diceSection";
-import EnemyDiceSection from "./components/enemyDiceSection";
+import ShipSelectCard from "./shipSelectCard";
+import ShipSummaryCard from "./shipSummaryCard";
+import WorldDeck from "./worldDeck";
+import CurrentCard from "./currentCard";
+import DiceSection from "./diceSection";
+import EnemyDiceSection from "./enemyDiceSection";
 
 const View: FunctionComponent = () => {
   const { ship: myShip, inBattle, myTurn } = useState();

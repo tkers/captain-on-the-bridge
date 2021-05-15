@@ -1,5 +1,5 @@
 import { render, h } from "preact";
-import Game from "./game";
+import Game from "./components/game";
 import { PreduxProvider } from "./predux";
 
 window.addEventListener("load", () => {
