@@ -1,16 +1,16 @@
 html {
-  --background-main: #343233; /*Brown*/
-  --background-dark: #272526; /* Brown 25% black */
-  --background-lite: #3c3a3a;
-  --normal-text: #efdab9; /* Dull yellow*/
-  --bold-text: #ffffff; /*White*/
-  --kinda-light-text: #8e8373; /* Light brown*/
-  --super-light-text: #574c4f; /* close-to-background brown*/
-  --super-light-line: #4e4b4d;
-  --primary-action: #ffd152; /* Stark yellow */
+  --background-main: #22252a; /*Brown*/
+  --background-dark: #1b1d22; /* Brown 25% black */
+  --background-lite: #292c33; /*#3c3a3a;*/
+  --normal-text: #9ea5b3; /* Dull yellow*/
+  --bold-text: #dcc193; /*White*/
+  --kinda-light-text: #6d727c; /* Light brown*/
+  --super-light-text: #6a6f79; /* close-to-background brown*/
+  --super-light-line: #3b3f4a;
+  --primary-action: #dcc193; /* Stark yellow */
   --primary-active: #ffc31f;
-  --secondy-action: #61efce; /*#78b0a0;*/ /* icy blue */
-  --secondy-active: #45edc6; /* icy blue */
+  --secondy-action: #548c6b; /*#78b0a0;*/ /* icy blue */
+  --secondy-active: #88c795; /* icy blue */
 
   /* green:#5cb166
   red:#c14e4e */
@@ -22,7 +22,7 @@ body {
   font-family: monospace;
   margin: 0;
   padding: 0;
-  font-size: 13px;
+  font-size: 15px;
 }
 
 @keyframes pulse {
@@ -59,7 +59,7 @@ nav.warn {
   background-color: var(--primary-action);
 }
 nav.alert {
-  background-color: #ff5252;
+  background-color: #d27277;
 }
 main {
   max-width: 1000px;
@@ -110,11 +110,21 @@ section.dicearea {
 
 @keyframes glow {
   from {
-    box-shadow: 0 0 4px var(--glow-color);
+    box-shadow: 0 0 4px #88c795;
   }
 
   to {
-    box-shadow: 0 0 12px var(--glow-color);
+    box-shadow: 0 0 12px #88c795;
+  }
+}
+
+@keyframes glowred {
+  from {
+    box-shadow: 0 0 4px #d27277;
+  }
+
+  to {
+    box-shadow: 0 0 12px #d27277;
   }
 }
 
@@ -131,20 +141,18 @@ section.dicearea {
   transition-timing-function: ease-in-out;
 }
 #ship-health div.bar.on {
-  --glow-color: #97d184;
-  background-color: #97d184; /* #88c795;*/
-  box-shadow: 0 0 4px var(--glow-color);
+  background-color: #88c795; /* #88c795;*/
+  box-shadow: 0 0 4px #88c795;
   animation-name: glow;
   animation-duration: 2s;
   animation-direction: alternate;
   animation-iteration-count: infinite;
 }
 #ship-health div.bar.warn {
-  --glow-color: #c14e4e;
-  background-color: #c14e4e;
-  box-shadow: 0 0 4px var(--glow-color);
-  animation-name: glow;
-  animation-duration: 2s;
+  background-color: #d27277;
+  box-shadow: 0 0 4px #d27277;
+  animation-name: glowred;
+  animation-duration: 1s;
   animation-direction: alternate;
   animation-iteration-count: infinite;
 }
@@ -266,6 +274,7 @@ table.movelist td {
 .dice.rolled,
 .dice.placed {
   border-style: solid;
+  border-color: var(--background-dark);
   background-color: var(--background-lite);
   color: var(--normal-text);
   transition: transform 200ms;
@@ -323,20 +332,23 @@ button:hover {
   background-color: var(--primary-active);
   box-shadow: 0 0 6px -2px var(--primary-action);
 }
-button:disabled {
+/* button:disabled {
   filter: grayscale(0.8);
-}
+} */
 .ship-modules button:disabled {
-  background-color: var(--super-light-text);
+  background-color: var(--background-lite);
 }
 .ship-modules button:disabled:hover {
   box-shadow: none;
 }
 button.snd {
-  background-color: var(--secondy-action);
+  border: 2px solid var(--primary-action);
+  color: var(--primary-action);
+  background: transparent;
 }
 button:hover.snd {
-  background-color: var(--secondy-active);
+  border-color: var(--primary-active);
+  color: var(--primary-active);
   box-shadow: 0 0 6px -2px var(--secondy-action);
 }
 
@@ -350,15 +362,17 @@ footer {
   border-radius: 500px;
   background-color: rgba(0, 0, 0, 0.2);
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(0, 0, 0, 0.3) inset;
-  color: #8e8373;
+  color: var(--kinda-light-text);
   font-size: 12px;
 }
 footer a {
-  color: #efdab9;
+  color: var(--secondy-action);
+  /* color: #6289eb; */
   text-decoration: none;
 }
 footer a:hover {
-  color: #ffd152;
+  color: var(--secondy-active);
+  /* color: #a6cdff; */
 }
 footer strong {
   color: rgba(0, 0, 0, 0.75);
