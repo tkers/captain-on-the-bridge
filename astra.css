@@ -1,3 +1,8 @@
+@font-face {
+  font-family: "Dekar";
+  src: url("Dekar.woff") format("woff");
+}
+
 html {
   --background-main: #22252a; /*Brown*/
   --background-dark: #1b1d22; /* Brown 25% black */
@@ -19,7 +24,7 @@ html {
 body {
   background-color: var(--background-main);
   color: var(--normal-text); /*yellow stark*/
-  font-family: monospace;
+  font-family: "Dekar";
   margin: 0;
   padding: 0;
   font-size: 15px;
